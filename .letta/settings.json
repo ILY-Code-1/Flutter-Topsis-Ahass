@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(lib\\app\\services/**)",
+      "Edit(lib\\app\\middlewares/**)",
+      "Edit(lib/**)",
+      "Edit(lib\\app\\widgets/**)",
+      "Edit(lib\\app\\modules\\login\\views/**)",
+      "Edit(lib\\app\\modules\\home\\views/**)",
+      "Edit(lib\\app\\modules\\home\\controllers/**)",
+      "Edit(lib\\app\\routes/**)",
+      "Bash(mkdir -p \"C:\\Flutter\\FlutterProjects\\flutter_kmeans_fotocopy\\lib\\app\\modules\\history\\bindings\")",
+      "Bash(mkdir -p \"C:\\Flutter\\FlutterProjects\\flutter_kmeans_fotocopy\\lib\\app\\modules\\history\\controllers\")",
+      "Bash(mkdir -p \"C:\\Flutter\\FlutterProjects\\flutter_kmeans_fotocopy\\lib\\app\\modules\\history\\views\")",
+      "Write(**)",
+      "Edit(lib\\app\\modules\\user_management\\views/**)",
+      "Edit(lib\\app\\modules\\history\\views/**)",
+      "Edit(lib\\app\\modules\\history\\controllers/**)",
+      "Edit(lib\\app\\modules\\kmeans\\controllers/**)",
+      "Edit(lib\\app\\modules\\success\\views/**)",
+      "Edit(**)",
+      "Bash(dir lib\\app\\modules)",
+      "Bash(flutter analyze)",
+      "Bash(cd lib/app/modules && mkdir -p admin_dashboard/bindings admin_dashboard/controllers admin_dashboard/views admin_dashboard/widgets)",
+      "Bash(New-Item -ItemType Directory -Path \"lib\\app\\modules\\admin_dashboard\\bindings\" -Force)",
+      "Bash(New-Item -ItemType Directory -Path \"lib\\app\\modules\\admin_dashboard\\controllers\" -Force)",
+      "Bash(New-Item -ItemType Directory -Path \"lib\\app\\modules\\admin_dashboard\\views\" -Force)",
+      "Bash(New-Item -ItemType Directory -Path \"lib\\app\\modules\\admin_dashboard\\widgets\" -Force)",
+      "Bash(mkdir \"lib\\app\\modules\\admin_dashboard\\bindings\" \"lib\\app\\modules\\admin_dashboard\\controllers\" \"lib\\app\\modules\\admin_dashboard\\views\" \"lib\\app\\modules\\admin_dashboard\\widgets\")",
+      "Bash(flutter analyze 2>&1 | grep -E \"(error|warning)\" | head -20)",
+      "Bash(flutter analyze 2>&1 | Select-String -Pattern \"error\")",
+      "Bash(mkdir -p docs)"
+    ]
+  }
+}
