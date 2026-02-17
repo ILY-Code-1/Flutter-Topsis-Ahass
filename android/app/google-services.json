@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "399785821298",
-    "project_id": "ilycode-44bd3",
-    "storage_bucket": "ilycode-44bd3.firebasestorage.app"
+    "project_number": "937322001415",
+    "project_id": "ilycode2",
+    "storage_bucket": "ilycode2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:399785821298:android:cc27137866a403047caeeb",
+        "mobilesdk_app_id": "1:937322001415:android:0ca207694a153f3434e6a2",
         "android_client_info": {
           "package_name": "com.example.flutter_kmeans_fotocopy"
         }
@@ -15,26 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA0eO9_kYI7iQUK4iM0p-YyleU6HCgaDQo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:399785821298:android:771ef36765679d357caeeb",
-        "android_client_info": {
-          "package_name": "com.example.flutter_topsis_smkinformatika"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA0eO9_kYI7iQUK4iM0p-YyleU6HCgaDQo"
+          "current_key": "AIzaSyAKmC4bx22znvB6yVgvUOcXg7o_m3MKfYk"
         }
       ],
       "services": {
