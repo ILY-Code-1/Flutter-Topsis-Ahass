@@ -16,10 +16,7 @@ class HomeView extends GetView<HomeController> {
         menuItems: controller.getMenuItems(),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.logout,
-              color: AppColors.error,
-            ),
+            icon: const Icon(Icons.logout, color: AppColors.error),
             onPressed: controller.showLogoutDialog,
             tooltip: 'Logout',
           ),
@@ -38,22 +35,18 @@ class HomeView extends GetView<HomeController> {
                     : _buildHeroDesktopLayout(context),
               ),
             ),
-            
+
             // Section 2: Apa itu K-Means
             Container(
               key: controller.aboutKey,
               color: AppColors.softBlue,
-              child: ResponsiveContainer(
-                child: _buildAboutSection(context),
-              ),
+              child: ResponsiveContainer(child: _buildAboutSection(context)),
             ),
-            
+
             // Section 3: Cara Penggunaan
             Container(
               key: controller.guideKey,
-              child: ResponsiveContainer(
-                child: _buildGuideSection(context),
-              ),
+              child: ResponsiveContainer(child: _buildGuideSection(context)),
             ),
           ],
         ),
@@ -90,7 +83,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildHeroContent(BuildContext context) {
     final authService = Get.find<AuthService>();
-    
+
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 800),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -109,24 +102,26 @@ class HomeView extends GetView<HomeController> {
             : CrossAxisAlignment.start,
         children: [
           Text(
-            'Analisis K-Means\nClustering',
+            'Analisis TOPSIS\nUntuk Keputusan',
             style: Responsive.value(
               context,
               mobile: AppTextStyles.h2.copyWith(fontSize: 32),
               tablet: AppTextStyles.h2,
               desktop: AppTextStyles.h1,
             ),
-            textAlign:
-                Responsive.isMobile(context) ? TextAlign.center : TextAlign.left,
+            textAlign: Responsive.isMobile(context)
+                ? TextAlign.center
+                : TextAlign.left,
           ),
           Gap.hMd,
           Text(
-            'Optimalkan manajemen stok fotocopy Anda dengan analisis clustering berbasis data. Identifikasi pola pemakaian dan tingkatkan efisiensi operasional.',
+            'Optimalkan manajemen sparepart AHASS Anda dengan metode TOPSIS. Dukung pengambilan keputusan berbasis data untuk pemilihan prioritas dan efisiensi stok.',
             style: AppTextStyles.bodyLarge.copyWith(
               color: AppColors.textSecondary,
             ),
-            textAlign:
-                Responsive.isMobile(context) ? TextAlign.center : TextAlign.left,
+            textAlign: Responsive.isMobile(context)
+                ? TextAlign.center
+                : TextAlign.left,
           ),
           Gap.hXl,
           Wrap(
@@ -141,7 +136,7 @@ class HomeView extends GetView<HomeController> {
                 PrimaryButton(
                   text: 'Mulai Analisis',
                   icon: Icons.play_arrow,
-                  onPressed: controller.navigateToKMeans,
+                  onPressed: () => Get.toNamed('/topsis'),
                 ),
                 PrimaryButton(
                   text: 'Hitung Cepat',
@@ -184,7 +179,7 @@ class HomeView extends GetView<HomeController> {
       },
       child: Center(
         child: Image.asset(
-          'assets/images/hero_kmeans.png',
+          'assets/images/hero_topsis.png',
           width: Responsive.value(
             context,
             mobile: 280,
@@ -198,6 +193,28 @@ class HomeView extends GetView<HomeController> {
             desktop: 240,
           ),
           fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback illustration jika gambar tidak ada
+            return Container(
+              width: Responsive.value(
+                context,
+                mobile: 280,
+                tablet: 300,
+                desktop: 340,
+              ),
+              height: Responsive.value(
+                context,
+                mobile: 200,
+                tablet: 220,
+                desktop: 240,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.softBlue,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(Icons.bar_chart, size: 100, color: AppColors.primary),
+            );
+          },
         ),
       ),
     );
@@ -246,16 +263,20 @@ class HomeView extends GetView<HomeController> {
               ],
             ),
             child: Image.asset(
-              'assets/images/illustration_kmeans.png',
+              'assets/images/illustration_topsis.png',
               fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.analytics,
+                  size: 80,
+                  color: AppColors.primary,
+                );
+              },
             ),
           ),
         ),
         Gap.wXl,
-        Expanded(
-          flex: 2,
-          child: _buildAboutContent(context),
-        ),
+        Expanded(flex: 2, child: _buildAboutContent(context)),
       ],
     );
   }
@@ -279,8 +300,11 @@ class HomeView extends GetView<HomeController> {
             ],
           ),
           child: Image.asset(
-            'assets/images/illustration_kmeans.png',
+            'assets/images/illustration_topsis.png',
             fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return Icon(Icons.analytics, size: 60, color: AppColors.primary);
+            },
           ),
         ),
         Gap.hLg,
@@ -296,13 +320,15 @@ class HomeView extends GetView<HomeController> {
           : CrossAxisAlignment.start,
       children: [
         Text(
-          'Apa itu K-Means?',
+          'Apa itu TOPSIS?',
           style: Responsive.value(
             context,
             mobile: AppTextStyles.h3,
             desktop: AppTextStyles.h2,
           ),
-          textAlign: Responsive.isMobile(context) ? TextAlign.center : TextAlign.left,
+          textAlign: Responsive.isMobile(context)
+              ? TextAlign.center
+              : TextAlign.left,
         ),
         Gap.hMd,
         Container(
@@ -319,12 +345,14 @@ class HomeView extends GetView<HomeController> {
             ],
           ),
           child: Text(
-            'K-Means adalah algoritma unsupervised learning yang digunakan untuk mengelompokkan data ke dalam beberapa cluster berdasarkan pola dan kemiripan nilai.\n\nSetiap data akan dikelompokkan ke cluster yang memiliki jarak terdekat dengan titik pusat (centroid) dari cluster tersebut.',
+            'TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution) adalah metode pengambilan keputusan multi-kriteria.\n\nMetode ini bekerja dengan membandingkan setiap alternatif dengan solusi ideal positif dan negatif, kemudian menghitung jarak relatif untuk menentukan peringkat terbaik.',
             style: AppTextStyles.bodyLarge.copyWith(
               color: AppColors.textSecondary,
               height: 1.8,
             ),
-            textAlign: Responsive.isMobile(context) ? TextAlign.center : TextAlign.left,
+            textAlign: Responsive.isMobile(context)
+                ? TextAlign.center
+                : TextAlign.left,
           ),
         ),
       ],
@@ -333,7 +361,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildGuideSection(BuildContext context) {
     final authService = Get.find<AuthService>();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
       child: Column(
@@ -380,7 +408,7 @@ class HomeView extends GetView<HomeController> {
             PrimaryButton(
               text: 'Mulai Sekarang',
               icon: Icons.arrow_forward,
-              onPressed: controller.navigateToKMeans,
+              onPressed: controller.navigateToUploadExcel,
             ),
           ],
         ],
@@ -393,28 +421,32 @@ class HomeView extends GetView<HomeController> {
       _GuideStepData(
         number: 1,
         title: 'Mulai Analisis',
-        description: 'Klik tombol "Mulai Analisis" untuk memulai proses input data clustering.',
+        description:
+            'Klik tombol "Mulai Analisis" untuk memulai proses input data clustering.',
         icon: Icons.play_circle_outline,
         color: AppColors.softBlue,
       ),
       _GuideStepData(
         number: 2,
         title: 'Edit Inputan',
-        description: 'Masukkan data item seperti nama barang, stok, dan parameter lainnya.',
+        description:
+            'Masukkan data item seperti nama barang, stok, dan parameter lainnya.',
         icon: Icons.edit_note,
         color: AppColors.softGreen,
       ),
       _GuideStepData(
         number: 3,
         title: 'Isi Nama & Email',
-        description: 'Lengkapi informasi nama dan email untuk menerima hasil analisis via email.',
+        description:
+            'Lengkapi informasi nama dan email untuk menerima hasil analisis via email.',
         icon: Icons.person_add_outlined,
-        color: AppColors.softPurple,
+        color: AppColors.info,
       ),
       _GuideStepData(
         number: 4,
         title: 'Hasil Analisis',
-        description: 'Lihat hasil clustering dan pengelompokan item berdasarkan pola pemakaian.',
+        description:
+            'Lihat hasil clustering dan pengelompokan item berdasarkan pola pemakaian.',
         icon: Icons.analytics_outlined,
         color: AppColors.softOrange,
       ),

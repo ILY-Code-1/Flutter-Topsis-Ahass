@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../kmeans/controllers/kmeans_controller.dart';
+import '../../topsis/controllers/topsis_controller.dart';
 
 class UploadExcelController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

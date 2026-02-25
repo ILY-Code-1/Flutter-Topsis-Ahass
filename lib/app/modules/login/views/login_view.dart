@@ -80,22 +80,45 @@ class LoginView extends GetView<LoginController> {
                 16,
               ), // Memberikan radius pada gambar
               child: Image(
-                image: const AssetImage('assets/images/logo_alya.jpg'),
+                image: const AssetImage('assets/images/logo_ahass.jpg'),
                 width: 56, // Ukuran diperbesar dari 32 ke 56
                 height: 56, // Ukuran diperbesar dari 32 ke 56
                 fit: BoxFit
                     .cover, // Memastikan gambar memenuhi area tanpa distorsi
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback jika logo tidak ada
+                  return Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      Icons.motorcycle,
+                      size: 32,
+                      color: Colors.white,
+                    ),
+                  );
+                },
               ),
             ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'K-MEANS ALYA FOTOCOPY',
+          'TOPSIS AHASS',
           style: AppTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
             letterSpacing: 1.2,
             color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Sistem Pengambilan Keputusan',
+          style: AppTextStyles.bodySmall.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -116,9 +139,9 @@ class LoginView extends GetView<LoginController> {
   Widget _buildUsernameField() {
     return CustomInput(
       label: 'Username',
-      hint: 'Your Email',
+      hint: 'Your Username',
       controller: controller.usernameController,
-      keyboardType: TextInputType.emailAddress,
+      keyboardType: TextInputType.text,
       prefixIcon: const Icon(Icons.person_outline),
       validator: controller.validateUsername,
       textInputAction: TextInputAction.next,
@@ -158,7 +181,7 @@ class LoginView extends GetView<LoginController> {
         text: 'SIGN IN',
         onPressed: controller.isLoading.value ? null : controller.signIn,
         isLoading: controller.isLoading.value,
-        backgroundColor: const Color(0xFFF7941D), // Orange color
+        backgroundColor: AppColors.loginButtonOrange,
         textColor: Colors.white,
         width: double.infinity,
         height: 52,

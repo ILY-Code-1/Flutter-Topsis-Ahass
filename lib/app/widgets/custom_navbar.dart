@@ -83,7 +83,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: AppSpacing.sm),
             if (!isMobile || title != null)
               Text(
-                title ?? 'K-Means Alya Fotocopy',
+                title ?? 'TOPSIS AHASS',
                 style: AppTextStyles.h5.copyWith(fontSize: isMobile ? 16 : 20),
               ),
             const Spacer(),

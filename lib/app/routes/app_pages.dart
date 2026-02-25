@@ -4,8 +4,8 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
-import '../modules/kmeans/bindings/kmeans_binding.dart';
-import '../modules/kmeans/views/kmeans_view.dart';
+import '../modules/topsis/bindings/topsis_binding.dart';
+import '../modules/topsis/views/topsis_view.dart';
 import '../modules/form/bindings/form_binding.dart';
 import '../modules/form/views/form_view.dart';
 import '../modules/success/views/success_view.dart';
@@ -49,9 +49,9 @@ class AppPages {
       transitionDuration: const Duration(milliseconds: 300),
     ),
     GetPage(
-      name: Routes.kmeans,
-      page: () => const KMeansView(),
-      binding: KMeansBinding(),
+      name: Routes.topsis,
+      page: () => const TopsisView(),
+      binding: TopsisBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
       middlewares: [AuthMiddleware()],

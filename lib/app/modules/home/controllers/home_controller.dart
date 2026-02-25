@@ -43,10 +43,6 @@ class HomeController extends GetxController {
     Get.toNamed(Routes.history);
   }
 
-  void navigateToKMeans() {
-    Get.toNamed('/kmeans');
-  }
-
   void navigateToUploadExcel() {
     Get.toNamed(Routes.uploadExcel);
   }

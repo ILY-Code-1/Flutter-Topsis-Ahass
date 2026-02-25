@@ -14,7 +14,7 @@ class FormView extends GetView<UserFormController> {
       appBar: CustomNavbar(
         title: 'Data Pengguna',
         showBackButton: true,
-        onBackPressed: () => Get.offNamed('/kmeans'),
+        onBackPressed: () => Get.offNamed('/topsis'),
       ),
       body: SingleChildScrollView(
         child: ResponsiveContainer(

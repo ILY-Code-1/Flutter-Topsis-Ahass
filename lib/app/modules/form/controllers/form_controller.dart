@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 
 class UserFormController extends GetxController {
-  static const String _resultIdKey = 'kmeans_result_id';
+  static const String _resultIdKey = 'topsis_result_id';
   final _storage = GetStorage();
 
   final namaController = TextEditingController();
@@ -72,7 +72,7 @@ class UserFormController extends GetxController {
       }
 
       // Fetch K-Means result from Firebase
-      final doc = await _firestore.collection('kmeans_results').doc(resultId).get();
+      final doc = await _firestore.collection('topsis_results').doc(resultId).get();
 
       if (!doc.exists) {
         throw Exception('Data hasil K-Means tidak ditemukan');

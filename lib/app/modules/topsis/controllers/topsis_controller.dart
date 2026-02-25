@@ -79,7 +79,7 @@ class ItemData {
   }
 }
 
-class KMeansController extends GetxController {
+class TopsisController extends GetxController {
   static const String _storageKey = 'kmeans_items';
   final _storage = GetStorage();
 

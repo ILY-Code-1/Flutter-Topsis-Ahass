@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'ilycode2.firebasestorage.app',
     measurementId: 'G-7QGKWSC6BW',
   );
+
 }

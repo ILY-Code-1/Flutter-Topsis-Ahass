@@ -49,19 +49,12 @@ class StepCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$stepNumber',
-                    style: AppTextStyles.h4.copyWith(
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.h4.copyWith(color: AppColors.primary),
                   ),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTextStyles.h5,
-                ),
-              ),
+              Expanded(child: Text(title, style: AppTextStyles.h5)),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
@@ -72,11 +65,7 @@ class StepCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
-            child: Icon(
-              icon,
-              size: 32,
-              color: AppColors.primary,
-            ),
+            child: Icon(icon, size: 32, color: AppColors.primary),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
@@ -97,7 +86,7 @@ class StepCard extends StatelessWidget {
       case 2:
         return AppColors.softGreen;
       case 3:
-        return AppColors.softPurple;
+        return AppColors.softRed;
       case 4:
         return AppColors.softOrange;
       default:

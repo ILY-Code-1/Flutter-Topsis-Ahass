@@ -3,16 +3,16 @@ import 'package:get/get.dart';
 import '../../../themes/themes.dart';
 import '../../../core/core.dart';
 import '../../../widgets/widgets.dart';
-import '../controllers/kmeans_controller.dart';
+import '../controllers/topsis_controller.dart';
 
-class KMeansView extends GetView<KMeansController> {
-  const KMeansView({super.key});
+class TopsisView extends GetView<TopsisController> {
+  const TopsisView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomNavbar(
-        title: 'K-Means Clustering',
+        title: 'TOPSIS Analysis',
         showBackButton: true,
         onBackPressed: () => Get.offNamed('/'),
       ),

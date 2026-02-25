@@ -29,7 +29,15 @@
       "Bash(mkdir \"lib\\app\\modules\\admin_dashboard\\bindings\" \"lib\\app\\modules\\admin_dashboard\\controllers\" \"lib\\app\\modules\\admin_dashboard\\views\" \"lib\\app\\modules\\admin_dashboard\\widgets\")",
       "Bash(flutter analyze 2>&1 | grep -E \"(error|warning)\" | head -20)",
       "Bash(flutter analyze 2>&1 | Select-String -Pattern \"error\")",
-      "Bash(mkdir -p docs)"
+      "Bash(mkdir -p docs)",
+      "Glob(**)",
+      "Read(lib/app/themes/**)",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\" && if exist kmeans (move kmeans topsis))",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\\topsis\"; Rename-Item -Path \"kmeans_binding.dart\" -NewName \"topsis_binding.dart\")",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\\topsis\\bindings\"; Rename-Item -Path \"kmeans_binding.dart\" -NewName \"topsis_binding.dart\")",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\\topsis\\controllers\"; Rename-Item -Path \"kmeans_controller.dart\" -NewName \"topsis_controller.dart\")",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\\topsis\\views\"; Rename-Item -Path \"kmeans_view.dart\" -NewName \"topsis_view.dart\")",
+      "Bash(Select-String -Path \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\\topsis\\controllers\\topsis_controller.dart\" -Pattern \"^class \" -CaseSensitive)"
     ]
   }
 }

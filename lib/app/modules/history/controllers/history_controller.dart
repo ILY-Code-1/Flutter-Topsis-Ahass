@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_topsis_ahass/app/themes/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -18,13 +19,13 @@ class HistoryController extends GetxController {
     fetchResults();
   }
 
-  // Fetch semua hasil analisis K-Means dari Firebase
+  // Fetch semua hasil analisis TOPSIS dari Firebase
   Future<void> fetchResults() async {
     try {
       isLoading.value = true;
 
       final querySnapshot = await _firestore
-          .collection('kmeans_results')
+          .collection('topsis_results')
           .orderBy('timestamp', descending: true)
           .get();
 
@@ -114,7 +115,7 @@ class HistoryController extends GetxController {
                         // Header - Like PDF
                         const Center(
                           child: Text(
-                            'LAPORAN HASIL ANALISIS K-MEANS CLUSTERING',
+                            'LAPORAN HASIL ANALISIS TOPSIS',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -337,7 +338,7 @@ class HistoryController extends GetxController {
                       icon: const Icon(Icons.download),
                       label: const Text('Download PDF'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4A90E2),
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
@@ -580,7 +581,7 @@ class HistoryController extends GetxController {
               // Header - Centered
               pw.Center(
                 child: pw.Text(
-                  'LAPORAN HASIL ANALISIS K-MEANS CLUSTERING',
+                  'LAPORAN HASIL ANALISIS TOPSIS',
                   style: pw.TextStyle(
                     fontSize: 16,
                     fontWeight: pw.FontWeight.bold,
@@ -1002,7 +1003,7 @@ class HistoryController extends GetxController {
     try {
       isLoading.value = true;
 
-      await _firestore.collection('kmeans_results').doc(resultId).delete();
+      await _firestore.collection('topsis_results').doc(resultId).delete();
 
       Get.snackbar(
         'Berhasil',

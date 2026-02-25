@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_storage/get_storage.dart';
 
-// import 'firebase_options.dart';
+import 'firebase_options.dart';
 import 'app/routes/app_pages.dart';
 import 'app/themes/app_theme.dart';
 import 'app/services/auth_service.dart';
@@ -11,6 +11,8 @@ import 'app/services/auth_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+
+  // Initialize Firebase
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize AuthService globally
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
         : Routes.login;
 
     return GetMaterialApp(
-      title: 'AHASS Auto Part Monitor',
+      title: 'TOPSIS AHASS - Sistem Pengambilan Keputusan',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       initialRoute: initialRoute,
