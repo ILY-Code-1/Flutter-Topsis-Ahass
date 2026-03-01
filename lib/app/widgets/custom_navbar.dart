@@ -72,7 +72,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
               ),
               child: ClipOval(
                 child: Image.asset(
-                  'assets/images/logo_alya.jpg',
+                  'assets/icons/logo.png',
                   width: 40,
                   height: 40,
                   fit: BoxFit

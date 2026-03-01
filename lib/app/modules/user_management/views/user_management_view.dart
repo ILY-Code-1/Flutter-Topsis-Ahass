@@ -36,7 +36,7 @@ class UserManagementView extends GetView<UserManagementController> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryLight],
+              colors: [AppColors.hondaRed, AppColors.hondaRedDark],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -46,7 +46,7 @@ class UserManagementView extends GetView<UserManagementController> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: controller.fetchUsers,
             tooltip: 'Refresh',
           ),
@@ -56,7 +56,7 @@ class UserManagementView extends GetView<UserManagementController> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color.fromARGB(255, 158, 199, 249).withOpacity(0.1), Colors.white],
+            colors: [AppColors.softPink.withOpacity(0.3), Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -78,7 +78,7 @@ class UserManagementView extends GetView<UserManagementController> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.hondaRed.withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -87,7 +87,7 @@ class UserManagementView extends GetView<UserManagementController> {
                     child: Icon(
                       Icons.people_outline,
                       size: 80,
-                      color: AppColors.primary.withOpacity(0.5),
+                      color: AppColors.hondaRed.withOpacity(0.5),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -158,7 +158,7 @@ class UserManagementView extends GetView<UserManagementController> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.hondaRed.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
@@ -166,14 +166,14 @@ class UserManagementView extends GetView<UserManagementController> {
                                         Icon(
                                           Icons.group,
                                           size: 16,
-                                          color: AppColors.primary,
+                                          color: AppColors.hondaRed,
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
                                           'Total: ${controller.users.length} user',
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
-                                                color: AppColors.primary,
+                                                color: AppColors.hondaRed,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                         ),
@@ -200,13 +200,13 @@ class UserManagementView extends GetView<UserManagementController> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           gradient: const LinearGradient(
-            colors: [AppColors.primary, AppColors.primaryLight],
+            colors: [AppColors.hondaRed, AppColors.hondaRedLight],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.5),
+              color: AppColors.hondaRed.withOpacity(0.5),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
@@ -272,7 +272,7 @@ class UserManagementView extends GetView<UserManagementController> {
               border: Border.all(color: AppColors.border, width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.05),
+                  color: AppColors.hondaRed.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -290,15 +290,15 @@ class UserManagementView extends GetView<UserManagementController> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primary.withOpacity(0.2),
-                              AppColors.primary.withOpacity(0.1),
+                              AppColors.hondaRed.withOpacity(0.2),
+                              AppColors.hondaRed.withOpacity(0.1),
                             ],
                           ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.person,
-                          color: AppColors.primary,
+                          color: AppColors.hondaRed,
                           size: 24,
                         ),
                       ),
@@ -506,7 +506,7 @@ class UserManagementView extends GetView<UserManagementController> {
             dataRowMinHeight: 70,
             dataRowMaxHeight: 80,
             headingRowColor: WidgetStateProperty.all(
-              AppColors.primary.withOpacity(0.08),
+              AppColors.hondaRed.withOpacity(0.08),
             ),
             columns: [
               DataColumn(
@@ -515,14 +515,14 @@ class UserManagementView extends GetView<UserManagementController> {
                     Icon(
                       Icons.person_outline,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Username',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -534,14 +534,14 @@ class UserManagementView extends GetView<UserManagementController> {
                     Icon(
                       Icons.badge_outlined,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Role',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -553,14 +553,14 @@ class UserManagementView extends GetView<UserManagementController> {
                     Icon(
                       Icons.toggle_on_outlined,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Status',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -572,14 +572,14 @@ class UserManagementView extends GetView<UserManagementController> {
                     Icon(
                       Icons.settings_outlined,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Aksi',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -608,13 +608,13 @@ class UserManagementView extends GetView<UserManagementController> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.hondaRed.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.person,
                             size: 20,
-                            color: AppColors.primary,
+                            color: AppColors.hondaRed,
                           ),
                         ),
                         const SizedBox(width: 12),

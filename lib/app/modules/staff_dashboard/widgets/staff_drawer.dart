@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import '../../../themes/themes.dart';
 import '../../../services/auth_service.dart';
 
-class AdminDrawer extends StatelessWidget {
+class StaffDrawer extends StatelessWidget {
   final String currentRoute;
 
-  const AdminDrawer({super.key, required this.currentRoute});
+  const StaffDrawer({super.key, required this.currentRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class AdminDrawer extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -70,7 +70,7 @@ class AdminDrawer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      'Administrator',
+                      'Staff',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white,
@@ -90,11 +90,11 @@ class AdminDrawer extends StatelessWidget {
                   _DrawerMenuItem(
                     icon: Icons.dashboard_rounded,
                     title: 'Beranda',
-                    isActive: currentRoute == '/admin-dashboard',
+                    isActive: currentRoute == '/staff-dashboard',
                     onTap: () {
                       Get.back();
-                      if (currentRoute != '/admin-dashboard') {
-                        Get.offNamed('/admin-dashboard');
+                      if (currentRoute != '/staff-dashboard') {
+                        Get.offNamed('/staff-dashboard');
                       }
                     },
                   ),
@@ -110,25 +110,23 @@ class AdminDrawer extends StatelessWidget {
                     },
                   ),
                   _DrawerMenuItem(
-                    icon: Icons.history_rounded,
-                    title: 'History',
-                    isActive: currentRoute == '/history',
+                    icon: Icons.add_business_rounded,
+                    title: 'Barang Masuk',
+                    isActive: currentRoute == '/form',
                     onTap: () {
                       Get.back();
-                      if (currentRoute != '/history') {
-                        Get.toNamed('/history');
+                      if (currentRoute != '/form') {
+                        Get.toNamed('/form');
                       }
                     },
                   ),
                   _DrawerMenuItem(
-                    icon: Icons.people_rounded,
-                    title: 'Kelola User',
-                    isActive: currentRoute == '/user-management',
+                    icon: Icons.move_to_inbox_rounded,
+                    title: 'Barang Keluar',
+                    isActive: false,
                     onTap: () {
                       Get.back();
-                      if (currentRoute != '/user-management') {
-                        Get.toNamed('/user-management');
-                      }
+                      Get.toNamed('/form');
                     },
                   ),
                 ],
@@ -181,7 +179,7 @@ class AdminDrawer extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
+            child: const Text(
               'Batal',
               style: TextStyle(
                 color: AppColors.textSecondary,

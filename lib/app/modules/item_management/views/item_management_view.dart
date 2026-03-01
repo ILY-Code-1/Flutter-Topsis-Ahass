@@ -29,7 +29,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Kelola Item',
+              'Kelola Stock',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -41,7 +41,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryLight],
+              colors: [AppColors.hondaRed, AppColors.hondaRedDark],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -51,7 +51,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: controller.fetchItems,
             tooltip: 'Refresh',
           ),
@@ -62,7 +62,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 158, 199, 249).withOpacity(0.1),
+              AppColors.softPink.withOpacity(0.3),
               Colors.white,
             ],
             begin: Alignment.topCenter,
@@ -86,7 +86,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.hondaRed.withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -95,7 +95,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                     child: Icon(
                       Icons.inventory_2_outlined,
                       size: 80,
-                      color: AppColors.primary.withOpacity(0.5),
+                      color: AppColors.hondaRed.withOpacity(0.5),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -166,7 +166,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.hondaRed.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
@@ -174,14 +174,14 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                         Icon(
                                           Icons.inventory_2,
                                           size: 16,
-                                          color: AppColors.primary,
+                                          color: AppColors.hondaRed,
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
                                           'Total: ${controller.items.length} item',
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
-                                                color: AppColors.primary,
+                                                color: AppColors.hondaRed,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                         ),
@@ -214,7 +214,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.5),
+              color: AppColors.hondaRed.withOpacity(0.5),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
@@ -276,7 +276,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
               border: Border.all(color: AppColors.border, width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.05),
+                  color: AppColors.hondaRed.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -302,7 +302,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                         ),
                         child: Icon(
                           Icons.inventory_2,
-                          color: AppColors.primary,
+                          color: AppColors.hondaRed,
                           size: 24,
                         ),
                       ),
@@ -402,18 +402,18 @@ class ItemManagementView extends GetView<ItemManagementController> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.hondaRed.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
+          Icon(icon, size: 14, color: AppColors.hondaRed),
           const SizedBox(width: 4),
           Text(
             label,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.primary,
+              color: AppColors.hondaRed,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -539,13 +539,13 @@ class ItemManagementView extends GetView<ItemManagementController> {
     return DataColumn(
       label: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.primary),
+          Icon(icon, size: 18, color: AppColors.hondaRed),
           const SizedBox(width: 8),
           Text(
             label,
             style: AppTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+              color: AppColors.hondaRed,
             ),
           ),
         ],

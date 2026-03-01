@@ -24,7 +24,7 @@ class HistoryView extends GetView<HistoryController> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Riwayat Analisis',
+              'History',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -36,7 +36,7 @@ class HistoryView extends GetView<HistoryController> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryLight],
+              colors: [AppColors.hondaRed, AppColors.hondaRedDark],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -46,7 +46,7 @@ class HistoryView extends GetView<HistoryController> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: controller.fetchResults,
             tooltip: 'Refresh',
           ),
@@ -56,7 +56,7 @@ class HistoryView extends GetView<HistoryController> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.softBlue.withOpacity(0.3), Colors.white],
+            colors: [AppColors.softPink.withOpacity(0.3), Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -78,7 +78,7 @@ class HistoryView extends GetView<HistoryController> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.hondaRed.withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -87,7 +87,7 @@ class HistoryView extends GetView<HistoryController> {
                     child: Icon(
                       Icons.analytics_outlined,
                       size: 80,
-                      color: AppColors.primary.withOpacity(0.5),
+                      color: AppColors.hondaRed.withOpacity(0.5),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -158,7 +158,7 @@ class HistoryView extends GetView<HistoryController> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.hondaRed.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
@@ -166,14 +166,14 @@ class HistoryView extends GetView<HistoryController> {
                                         Icon(
                                           Icons.assessment,
                                           size: 16,
-                                          color: AppColors.primary,
+                                          color: AppColors.hondaRed,
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
                                           'Total: ${controller.results.length} analisis',
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
-                                                color: AppColors.primary,
+                                                color: AppColors.hondaRed,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                         ),
@@ -239,7 +239,7 @@ class HistoryView extends GetView<HistoryController> {
             dataRowMinHeight: 70,
             dataRowMaxHeight: 80,
             headingRowColor: WidgetStateProperty.all(
-              AppColors.primary.withOpacity(0.08),
+              AppColors.hondaRed.withOpacity(0.08),
             ),
             columns: [
               DataColumn(
@@ -248,14 +248,14 @@ class HistoryView extends GetView<HistoryController> {
                     Icon(
                       Icons.calendar_today,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Tanggal & Waktu',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -267,14 +267,14 @@ class HistoryView extends GetView<HistoryController> {
                     Icon(
                       Icons.inventory_2_outlined,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Total Items',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -283,13 +283,13 @@ class HistoryView extends GetView<HistoryController> {
               DataColumn(
                 label: Row(
                   children: [
-                    Icon(Icons.refresh, size: 18, color: AppColors.primary),
+                    Icon(Icons.refresh, size: 18, color: AppColors.hondaRed),
                     const SizedBox(width: 8),
                     Text(
                       'Iterasi',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -301,14 +301,14 @@ class HistoryView extends GetView<HistoryController> {
                     Icon(
                       Icons.settings_outlined,
                       size: 18,
-                      color: AppColors.primary,
+                      color: AppColors.hondaRed,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Aksi',
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: AppColors.hondaRed,
                       ),
                     ),
                   ],
@@ -335,13 +335,13 @@ class HistoryView extends GetView<HistoryController> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.hondaRed.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.event,
                             size: 20,
-                            color: AppColors.primary,
+                            color: AppColors.hondaRed,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -506,7 +506,7 @@ class HistoryView extends GetView<HistoryController> {
               border: Border.all(color: AppColors.border, width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.05),
+                  color: AppColors.hondaRed.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -524,15 +524,15 @@ class HistoryView extends GetView<HistoryController> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primary.withOpacity(0.2),
-                              AppColors.primary.withOpacity(0.1),
+                              AppColors.hondaRed.withOpacity(0.2),
+                              AppColors.hondaRed.withOpacity(0.1),
                             ],
                           ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.analytics,
-                          color: AppColors.primary,
+                          color: AppColors.hondaRed,
                           size: 24,
                         ),
                       ),

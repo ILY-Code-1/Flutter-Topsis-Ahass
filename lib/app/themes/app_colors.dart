@@ -3,7 +3,15 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primary Colors
+  // Honda AHASS Theme Colors
+  static const Color hondaRed = Color(0xFFE21F26); // Honda Red - Primary
+  static const Color hondaRedDark = Color(0xFFB71C1C); // Deep Red - Hover/Pressed
+  static const Color hondaRedLight = Color(0xFFE57373); // Light Red
+  static const Color darkMaroon = Color(0xFF8B0000); // Dark Maroon for Sidebar
+  static const Color softPink = Color(0xFFFCE4EC); // Soft Pink Background
+  static const Color softPeach = Color(0xFFFBE9E7); // Soft Peach Tint
+
+  // Legacy Primary Colors (kept for compatibility)
   static const Color primary = Color(0xFF134E8E); // Biru
   static const Color primaryDark = Color(0xFF0E3A6B);
   static const Color primaryLight = Color(0xFF1E6BC0);
@@ -15,6 +23,7 @@ class AppColors {
 
   // Neutral Colors
   static const Color background = Color(0xFFF8F9FA);
+  static const Color dashboardBackground = Color(0xFFFCE4EC); // Soft pink for dashboard
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
 

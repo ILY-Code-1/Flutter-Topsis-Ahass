@@ -23,6 +23,8 @@ import '../modules/upload_excel/bindings/upload_excel_binding.dart';
 import '../modules/upload_excel/views/upload_excel_view.dart';
 import '../modules/admin_dashboard/bindings/admin_dashboard_binding.dart';
 import '../modules/admin_dashboard/views/admin_dashboard_view.dart';
+import '../modules/staff_dashboard/bindings/staff_dashboard_binding.dart';
+import '../modules/staff_dashboard/views/staff_dashboard_view.dart';
 import '../middlewares/auth_middleware.dart';
 
 part 'app_routes.dart';
@@ -123,6 +125,14 @@ class AppPages {
       name: Routes.adminDashboard,
       page: () => const AdminDashboardView(),
       binding: AdminDashboardBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.staffDashboard,
+      page: () => const StaffDashboardView(),
+      binding: StaffDashboardBinding(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
       middlewares: [AuthMiddleware()],

@@ -13,7 +13,7 @@ void main() async {
   await GetStorage.init();
 
   // Initialize Firebase
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize AuthService globally
   Get.put(AuthService(), permanent: true);
@@ -28,9 +28,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Cek auth state saat app start
     final authService = Get.find<AuthService>();
-    final initialRoute = authService.isAuthenticated
-        ? Routes.home
-        : Routes.login;
+    String initialRoute;
+
+    if (!authService.isAuthenticated) {
+      initialRoute = Routes.login;
+    } else if (authService.isAdmin) {
+      initialRoute = Routes.adminDashboard;
+    } else {
+      initialRoute = Routes.staffDashboard;
+    }
 
     return GetMaterialApp(
       title: 'TOPSIS AHASS - Sistem Pengambilan Keputusan',
