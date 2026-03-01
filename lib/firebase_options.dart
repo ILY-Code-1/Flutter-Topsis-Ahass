@@ -23,11 +23,20 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -42,48 +51,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyB3vvrHBhPOtW-U-4uFbMEWEWiW8RxIt8U',
-    appId: '1:937322001415:web:bad652a2f2698c6534e6a2',
+    appId: '1:937322001415:web:37eceac0666f0f2d34e6a2',
     messagingSenderId: '937322001415',
     projectId: 'ilycode2',
     authDomain: 'ilycode2.firebaseapp.com',
     storageBucket: 'ilycode2.firebasestorage.app',
-    measurementId: 'G-ZQKQR5Z0L7',
+    measurementId: 'G-JZ68P91YG3',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAKmC4bx22znvB6yVgvUOcXg7o_m3MKfYk',
-    appId: '1:937322001415:android:0ca207694a153f3434e6a2',
+    appId: '1:937322001415:android:a91abcae7feb74bb34e6a2',
     messagingSenderId: '937322001415',
     projectId: 'ilycode2',
     storageBucket: 'ilycode2.firebasestorage.app',
   );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyABv6QNZgkwoTgn6w74TFVEf2TJVkGJmbQ',
-    appId: '1:937322001415:ios:206e35d7f56868bd34e6a2',
-    messagingSenderId: '937322001415',
-    projectId: 'ilycode2',
-    storageBucket: 'ilycode2.firebasestorage.app',
-    iosBundleId: 'com.example.flutterKmeansFotocopy',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyABv6QNZgkwoTgn6w74TFVEf2TJVkGJmbQ',
-    appId: '1:937322001415:ios:206e35d7f56868bd34e6a2',
-    messagingSenderId: '937322001415',
-    projectId: 'ilycode2',
-    storageBucket: 'ilycode2.firebasestorage.app',
-    iosBundleId: 'com.example.flutterKmeansFotocopy',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyB3vvrHBhPOtW-U-4uFbMEWEWiW8RxIt8U',
-    appId: '1:937322001415:web:2491475b73e7bb2f34e6a2',
-    messagingSenderId: '937322001415',
-    projectId: 'ilycode2',
-    authDomain: 'ilycode2.firebaseapp.com',
-    storageBucket: 'ilycode2.firebasestorage.app',
-    measurementId: 'G-7QGKWSC6BW',
-  );
-
 }

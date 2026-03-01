@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:937322001415:android:0ca207694a153f3434e6a2",
+        "mobilesdk_app_id": "1:937322001415:android:a91abcae7feb74bb34e6a2",
         "android_client_info": {
-          "package_name": "com.example.flutter_kmeans_fotocopy"
+          "package_name": "com.example.flutterTopsisAhass"
         }
       },
       "oauth_client": [],
