@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import '../../../models/item_model.dart';
+import '../../../services/item_service.dart';
 
 class ItemManagementController extends GetxController {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final ItemService _itemService = Get.find<ItemService>();
 
   final isLoading = false.obs;
-  final items = <Map<String, dynamic>>[].obs;
+  final items = <ItemModel>[].obs;
+
+  // Selected month filter (for future implementation)
+  final selectedMonth = ''.obs;
 
   // Controllers untuk form
+  final idBarangController = TextEditingController();
   final namaBarangController = TextEditingController();
-  final stokAwalController = TextEditingController();
-  final stokAkhirController = TextEditingController();
-  final barangMasukController = TextEditingController();
-  final barangKeluarController = TextEditingController();
-  final rataRataPemakaianController = TextEditingController();
-  final frekuensiPembaruanController = TextEditingController();
-  final hariPerkiraanHabisController = TextEditingController();
-  final fluktuasiPemakaianController = TextEditingController();
-  final hargaController = TextEditingController();
+  final kategoriController = TextEditingController();
+  final stokSekarangController = TextEditingController();
+  final stokMinimumController = TextEditingController();
+  final leadTimeController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   // Mode edit atau tambah
@@ -33,16 +34,12 @@ class ItemManagementController extends GetxController {
 
   @override
   void onClose() {
+    idBarangController.dispose();
     namaBarangController.dispose();
-    stokAwalController.dispose();
-    stokAkhirController.dispose();
-    barangMasukController.dispose();
-    barangKeluarController.dispose();
-    rataRataPemakaianController.dispose();
-    frekuensiPembaruanController.dispose();
-    hariPerkiraanHabisController.dispose();
-    fluktuasiPemakaianController.dispose();
-    hargaController.dispose();
+    kategoriController.dispose();
+    stokSekarangController.dispose();
+    stokMinimumController.dispose();
+    leadTimeController.dispose();
     super.onClose();
   }
 
@@ -51,16 +48,8 @@ class ItemManagementController extends GetxController {
     try {
       isLoading.value = true;
 
-      final querySnapshot = await _firestore
-          .collection('items')
-          .orderBy('namaBarang')
-          .get();
-
-      items.value = querySnapshot.docs.map((doc) {
-        final data = doc.data();
-        data['id'] = doc.id;
-        return data;
-      }).toList();
+      final fetchedItems = await _itemService.getItems();
+      items.value = fetchedItems;
 
     } catch (e) {
       Get.snackbar(
@@ -75,62 +64,26 @@ class ItemManagementController extends GetxController {
     }
   }
 
-  // Hitung Hari Perkiraan Stok Habis secara otomatis
-  void calculateHariPerkiraanHabis() {
-    final stokAkhir = double.tryParse(stokAkhirController.text) ?? 0;
-    final rataRataBulanan = double.tryParse(rataRataPemakaianController.text) ?? 0;
-
-    if (stokAkhir > 0 && rataRataBulanan > 0) {
-      final pemakaianPerHari = rataRataBulanan / 30;
-      final estimasiHari = stokAkhir / pemakaianPerHari;
-      hariPerkiraanHabisController.text = estimasiHari.toStringAsFixed(2);
-    } else {
-      hariPerkiraanHabisController.text = "0.00";
-    }
-  }
-
-  // Hitung Fluktuasi Pemakaian Bulanan secara otomatis
-  void calculateFluktuasiPemakaian() {
-    final rataRataBulanan = double.tryParse(rataRataPemakaianController.text) ?? 0;
-
-    if (rataRataBulanan > 0) {
-      final std = 0.2 * rataRataBulanan;
-      fluktuasiPemakaianController.text = std.toStringAsFixed(2);
-    } else {
-      fluktuasiPemakaianController.text = "0.00";
-    }
-  }
-
   // Reset form
   void resetForm() {
     editingItemId = null;
+    idBarangController.clear();
     namaBarangController.clear();
-    stokAwalController.clear();
-    stokAkhirController.clear();
-    barangMasukController.clear();
-    barangKeluarController.clear();
-    rataRataPemakaianController.clear();
-    frekuensiPembaruanController.clear();
-    hariPerkiraanHabisController.clear();
-    fluktuasiPemakaianController.clear();
-    hargaController.clear();
+    kategoriController.clear();
+    stokSekarangController.clear();
+    stokMinimumController.clear();
+    leadTimeController.clear();
   }
 
   // Load data ke form untuk edit
-  void loadItemToForm(Map<String, dynamic> item) {
-    editingItemId = item['id'];
-    namaBarangController.text = item['namaBarang'] ?? '';
-    stokAwalController.text = (item['stokAwal'] ?? 0).toString();
-    stokAkhirController.text = (item['stokAkhir'] ?? 0).toString();
-    barangMasukController.text = (item['barangMasuk'] ?? 0).toString();
-    barangKeluarController.text = (item['barangKeluar'] ?? 0).toString();
-    rataRataPemakaianController.text = (item['rataRataPemakaian'] ?? 0).toString();
-    frekuensiPembaruanController.text = (item['frekuensiPembaruan'] ?? 0).toString();
-    hariPerkiraanHabisController.text = (item['hariPerkiraanHabis'] ?? 0).toString();
-    fluktuasiPemakaianController.text = (item['fluktuasiPemakaian'] ?? 0).toString();
-    // Harga nullable - jika null, biarkan kosong
-    final harga = item['harga'];
-    hargaController.text = harga != null ? harga.toString() : '';
+  void loadItemToForm(ItemModel item) {
+    editingItemId = item.idBarang;
+    idBarangController.text = item.idBarang;
+    namaBarangController.text = item.namaBarang;
+    kategoriController.text = item.kategori;
+    stokSekarangController.text = item.stokSekarang.toString();
+    stokMinimumController.text = item.stokMinimum.toString();
+    leadTimeController.text = item.leadTime.toString();
   }
 
   // Format angka ke Rupiah
@@ -144,6 +97,12 @@ class ItemManagementController extends GetxController {
     return formatter.format(value);
   }
 
+  // Format tanggal
+  String formatDate(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    return DateFormat('dd/MM/yyyy HH:mm').format(date);
+  }
+
   // Save item (Create or Update)
   Future<void> saveItem() async {
     if (!formKey.currentState!.validate()) {
@@ -153,31 +112,44 @@ class ItemManagementController extends GetxController {
     try {
       isLoading.value = true;
 
-      final itemData = {
-        'namaBarang': namaBarangController.text.trim(),
-        'stokAwal': int.parse(stokAwalController.text),
-        'stokAkhir': int.parse(stokAkhirController.text),
-        'barangMasuk': int.parse(barangMasukController.text),
-        'barangKeluar': int.parse(barangKeluarController.text),
-        'rataRataPemakaian': double.parse(rataRataPemakaianController.text),
-        'frekuensiPembaruan': int.parse(frekuensiPembaruanController.text),
-        'hariPerkiraanHabis': double.parse(hariPerkiraanHabisController.text),
-        'fluktuasiPemakaian': double.parse(fluktuasiPemakaianController.text),
-        'updatedAt': DateTime.now(),
-      };
+      final idBarang = idBarangController.text.trim();
+      final namaBarang = namaBarangController.text.trim();
+      final kategori = kategoriController.text.trim();
+      final stokSekarang = int.parse(stokSekarangController.text);
+      final stokMinimum = int.parse(stokMinimumController.text);
+      final leadTime = int.parse(leadTimeController.text);
 
-      // Harga nullable - hanya simpan jika ada isi
-      final hargaText = hargaController.text.trim();
-      if (hargaText.isNotEmpty) {
-        final harga = int.tryParse(hargaText);
-        if (harga != null) {
-          itemData['harga'] = harga;
-        }
-      }
+      // Calculate status stok automatically
+      final statusStok = ItemModel.calculateStatusStok(stokSekarang, stokMinimum);
+
+      final item = ItemModel(
+        idBarang: idBarang,
+        namaBarang: namaBarang,
+        kategori: kategori,
+        stokSekarang: stokSekarang,
+        stokMinimum: stokMinimum,
+        leadTime: leadTime,
+        statusStok: statusStok,
+        lastUpdate: Timestamp.now(),
+      );
 
       if (editingItemId == null) {
+        // Check for duplicate ID
+        final idExists = await _itemService.checkIdBarangExists(idBarang);
+        if (idExists) {
+          Get.snackbar(
+            'Error',
+            'ID Barang "$idBarang" sudah ada. Gunakan ID lain.',
+            backgroundColor: Colors.red.shade100,
+            colorText: Colors.red.shade900,
+            snackPosition: SnackPosition.TOP,
+          );
+          isLoading.value = false;
+          return;
+        }
+
         // Create new item
-        await _firestore.collection('items').add(itemData);
+        await _itemService.addItem(item);
 
         Get.snackbar(
           'Berhasil',
@@ -188,10 +160,7 @@ class ItemManagementController extends GetxController {
         );
       } else {
         // Update existing item
-        await _firestore
-            .collection('items')
-            .doc(editingItemId)
-            .update(itemData);
+        await _itemService.updateItem(item);
 
         Get.snackbar(
           'Berhasil',
@@ -219,7 +188,7 @@ class ItemManagementController extends GetxController {
   }
 
   // Delete item
-  void deleteItem(String itemId, String namaBarang) {
+  void deleteItem(String idBarang, String namaBarang) {
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(
@@ -244,7 +213,7 @@ class ItemManagementController extends GetxController {
           ElevatedButton(
             onPressed: () async {
               Get.back(); // Close dialog
-              await _deleteItemConfirmed(itemId);
+              await _deleteItemConfirmed(idBarang);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -257,11 +226,11 @@ class ItemManagementController extends GetxController {
     );
   }
 
-  Future<void> _deleteItemConfirmed(String itemId) async {
+  Future<void> _deleteItemConfirmed(String idBarang) async {
     try {
       isLoading.value = true;
 
-      await _firestore.collection('items').doc(itemId).delete();
+      await _itemService.deleteItem(idBarang);
 
       Get.snackbar(
         'Berhasil',

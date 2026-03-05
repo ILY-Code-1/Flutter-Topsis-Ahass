@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../themes/themes.dart';
 import '../../../widgets/custom_input.dart';
+import '../../../widgets/stock_table_widget.dart';
+import '../../../models/item_model.dart';
 import '../controllers/item_management_controller.dart';
 import '../../admin_dashboard/widgets/admin_drawer.dart';
 
@@ -144,51 +146,161 @@ class ItemManagementView extends GetView<ItemManagementController> {
                           ),
                         ],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Daftar Item',
-                                style: AppTextStyles.h3.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.hondaRed.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.inventory_2,
-                                          size: 16,
-                                          color: AppColors.hondaRed,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Total: ${controller.items.length} item',
-                                          style: AppTextStyles.bodyMedium
-                                              .copyWith(
-                                                color: AppColors.hondaRed,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                        ),
-                                      ],
+                                  Text(
+                                    'Daftar Item',
+                                    style: AppTextStyles.h3.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.hondaRed.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.inventory_2,
+                                              size: 16,
+                                              color: AppColors.hondaRed,
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              'Total: ${controller.items.length} item',
+                                              style: AppTextStyles.bodyMedium
+                                                  .copyWith(
+                                                    color: AppColors.hondaRed,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              // Month Filter Dropdown
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: AppColors.border),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      isExpanded: true,
+                                      hint: const Text('Pilih Bulan'),
+                                      value: controller.selectedMonth.value.isNotEmpty
+                                          ? controller.selectedMonth.value
+                                          : null,
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'Semua',
+                                          child: Text('Semua Bulan'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Januari',
+                                          child: Text('Januari'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Februari',
+                                          child: Text('Februari'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Maret',
+                                          child: Text('Maret'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'April',
+                                          child: Text('April'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Mei',
+                                          child: Text('Mei'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Juni',
+                                          child: Text('Juni'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Juli',
+                                          child: Text('Juli'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Agustus',
+                                          child: Text('Agustus'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'September',
+                                          child: Text('September'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Oktober',
+                                          child: Text('Oktober'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'November',
+                                          child: Text('November'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Desember',
+                                          child: Text('Desember'),
+                                        ),
+                                      ],
+                                      onChanged: (value) {
+                                        // Month filter will be implemented in future
+                                        controller.selectedMonth.value = value ?? '';
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              // Mulai Analisis Button
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    // Navigate to TOPSIS analysis
+                                    Get.toNamed('/topsis');
+                                  },
+                                  icon: const Icon(Icons.analytics, size: 20),
+                                  label: const Text(
+                                    'Mulai Analisis',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.success,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -196,7 +308,15 @@ class ItemManagementView extends GetView<ItemManagementController> {
                       ),
                     ),
                     // Table Card
-                    _buildItemTable(context),
+                    StockTableWidget(
+                      items: controller.items,
+                      config: StockTableConfig(
+                        showActions: true,
+                        isEditable: true,
+                        onRefresh: controller.fetchItems,
+                        showTransactions: false, // Admin doesn't need transaction counts
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -312,22 +432,30 @@ class ItemManagementView extends GetView<ItemManagementController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item['namaBarang'] ?? '',
+                              item.namaBarang,
                               style: AppTextStyles.bodyLarge.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Text(
-                              'Stok: ${item['stokAkhir'] ?? 0}',
-                              style: AppTextStyles.bodyMedium.copyWith(
+                              'ID: ${item.idBarang}',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Kategori: ${item.kategori}',
+                              style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      _buildStatusBadge(item.statusStok),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -338,54 +466,68 @@ class ItemManagementView extends GetView<ItemManagementController> {
                     runSpacing: 8,
                     children: [
                       _buildInfoChip(
-                        'Masuk: ${item['barangMasuk'] ?? 0}',
-                        Icons.input,
+                        'Stok Min: ${item.stokMinimum}',
+                        Icons.looks_one_outlined,
                       ),
                       _buildInfoChip(
-                        'Keluar: ${item['barangKeluar'] ?? 0}',
+                        'Stok Saat Ini: ${item.stokSekarang}',
+                        Icons.looks_two_outlined,
+                      ),
+                      _buildInfoChip(
+                        'Lead Time: ${item.leadTime} hari',
+                        Icons.access_time_outlined,
+                      ),
+                      _buildInfoChip(
+                        'Total Keluar: TBD',
                         Icons.output,
                       ),
                       _buildInfoChip(
-                        'Hari Habis: ${item['hariPerkiraanHabis'] ?? 0}',
-                        Icons.timer,
-                      ),
-                      _buildInfoChip(
-                        controller.formatRupiah(item['harga'] as int?),
-                        Icons.payments_outlined,
+                        'Frekuensi: TBD',
+                        Icons.update,
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.edit_outlined),
-                          color: Colors.blue.shade700,
-                          onPressed: () => showItemFormDialog(item: item),
-                          tooltip: 'Edit',
+                      Text(
+                        controller.formatDate(item.lastUpdate),
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          color: Colors.red.shade700,
-                          onPressed: () => controller.deleteItem(
-                            item['id'],
-                            item['namaBarang'],
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.edit_outlined),
+                              color: Colors.blue.shade700,
+                              onPressed: () => showItemFormDialog(item: item),
+                              tooltip: 'Edit',
+                            ),
                           ),
-                          tooltip: 'Hapus',
-                        ),
+                          const SizedBox(width: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.delete_outline),
+                              color: Colors.red.shade700,
+                              onPressed: () => controller.deleteItem(
+                                item.idBarang,
+                                item.namaBarang,
+                              ),
+                              tooltip: 'Hapus',
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -394,6 +536,40 @@ class ItemManagementView extends GetView<ItemManagementController> {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String statusStok) {
+    Color bgColor;
+
+    switch (statusStok) {
+      case 'Aman':
+        bgColor = AppColors.success;
+        break;
+      case 'Menipis':
+        bgColor = AppColors.warning;
+        break;
+      case 'Kritis':
+        bgColor = AppColors.error;
+        break;
+      default:
+        bgColor = Colors.grey;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        statusStok,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
       ),
     );
   }
@@ -455,16 +631,15 @@ class ItemManagementView extends GetView<ItemManagementController> {
               AppColors.primary.withOpacity(0.08),
             ),
             columns: [
+              _buildDataColumn('Id Barang', Icons.qr_code_outlined),
               _buildDataColumn('Nama Barang', Icons.inventory_2_outlined),
-              _buildDataColumn('Stok Awal', Icons.looks_one_outlined),
-              _buildDataColumn('Stok Akhir', Icons.looks_two_outlined),
-              _buildDataColumn('Barang Masuk', Icons.input_outlined),
-              _buildDataColumn('Barang Keluar', Icons.output_outlined),
-              _buildDataColumn('Rata-rata', Icons.calendar_month_outlined),
-              _buildDataColumn('Frekuensi', Icons.update_outlined),
-              _buildDataColumn('Hari Habis', Icons.timer_outlined),
-              _buildDataColumn('Fluktuasi', Icons.trending_up_outlined),
-              _buildDataColumn('Harga', Icons.payments_outlined),
+              _buildDataColumn('Stok Minimum', Icons.looks_one_outlined),
+              _buildDataColumn('Stok Saat Ini', Icons.looks_two_outlined),
+              _buildDataColumn('Lead Time (Hari)', Icons.access_time_outlined),
+              _buildDataColumn('Total Keluar', Icons.output_outlined),
+              _buildDataColumn('Frekuensi Keluar', Icons.update_outlined),
+              _buildDataColumn('Tanggal Update', Icons.calendar_today_outlined),
+              _buildDataColumn('Status Stok', Icons.info_outline),
               _buildDataColumn('Aksi', Icons.settings_outlined),
             ],
             rows: controller.items.asMap().entries.map((entry) {
@@ -481,16 +656,15 @@ class ItemManagementView extends GetView<ItemManagementController> {
                   return Colors.white;
                 }),
                 cells: [
-                  _buildDataCell(item['namaBarang'] ?? ''),
-                  _buildDataCell((item['stokAwal'] ?? 0).toString()),
-                  _buildDataCell((item['stokAkhir'] ?? 0).toString()),
-                  _buildDataCell((item['barangMasuk'] ?? 0).toString()),
-                  _buildDataCell((item['barangKeluar'] ?? 0).toString()),
-                  _buildDataCell((item['rataRataPemakaian'] ?? 0).toString()),
-                  _buildDataCell((item['frekuensiPembaruan'] ?? 0).toString()),
-                  _buildDataCell((item['hariPerkiraanHabis'] ?? 0).toString()),
-                  _buildDataCell((item['fluktuasiPemakaian'] ?? 0).toString()),
-                  _buildDataCell(controller.formatRupiah(item['harga'] as int?)),
+                  _buildDataCell(item.idBarang),
+                  _buildDataCell(item.namaBarang),
+                  _buildDataCell(item.stokMinimum.toString()),
+                  _buildDataCell(item.stokSekarang.toString()),
+                  _buildDataCell('${item.leadTime} hari'),
+                  _buildDataCell('TBD'), // To be implemented
+                  _buildDataCell('TBD'), // To be implemented
+                  _buildDataCell(controller.formatDate(item.lastUpdate)),
+                  _buildStatusCell(item.statusStok),
                   DataCell(
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -518,8 +692,8 @@ class ItemManagementView extends GetView<ItemManagementController> {
                             color: Colors.red.shade700,
                             tooltip: 'Hapus',
                             onPressed: () => controller.deleteItem(
-                              item['id'],
-                              item['namaBarang'],
+                              item.idBarang,
+                              item.namaBarang,
                             ),
                           ),
                         ),
@@ -529,6 +703,43 @@ class ItemManagementView extends GetView<ItemManagementController> {
                 ],
               );
             }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  DataCell _buildStatusCell(String statusStok) {
+    Color bgColor;
+    Color textColor = Colors.white;
+
+    switch (statusStok) {
+      case 'Aman':
+        bgColor = AppColors.success;
+        break;
+      case 'Menipis':
+        bgColor = AppColors.warning;
+        break;
+      case 'Kritis':
+        bgColor = AppColors.error;
+        break;
+      default:
+        bgColor = Colors.grey;
+    }
+
+    return DataCell(
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          statusStok,
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
           ),
         ),
       ),
@@ -565,7 +776,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
     );
   }
 
-  void showItemFormDialog({Map<String, dynamic>? item}) {
+  void showItemFormDialog({ItemModel? item}) {
     if (item == null) {
       controller.resetForm();
     } else {
@@ -596,10 +807,27 @@ class ItemManagementView extends GetView<ItemManagementController> {
                   ),
                   const SizedBox(height: 24),
 
+                  // ID Barang field
+                  CustomInput(
+                    label: 'ID Barang',
+                    hint: 'BRG001',
+                    controller: controller.idBarangController,
+                    enabled: item == null, // Disabled when editing
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'ID barang tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                    prefixIcon: const Icon(Icons.qr_code_outlined),
+                    infoTooltip: 'Kode unik untuk barang (tidak bisa diubah setelah dibuat)',
+                  ),
+                  const SizedBox(height: 16),
+
                   // Nama Barang field
                   CustomInput(
                     label: 'Nama Barang',
-                    hint: 'Kertas A4',
+                    hint: 'Oli Mesin 10W-30',
                     controller: controller.namaBarangController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -612,15 +840,31 @@ class ItemManagementView extends GetView<ItemManagementController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Stok Awal field
+                  // Kategori field
                   CustomInput(
-                    label: 'Stok Awal',
-                    hint: '5',
-                    controller: controller.stokAwalController,
+                    label: 'Kategori',
+                    hint: 'Oli',
+                    controller: controller.kategoriController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Kategori tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                    prefixIcon: const Icon(Icons.category_outlined),
+                    infoTooltip: 'Kategori barang (contoh: Oli, Sparepart, Aksesoris)',
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Stok Minimum field
+                  CustomInput(
+                    label: 'Stok Minimum',
+                    hint: '10',
+                    controller: controller.stokMinimumController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Stok awal tidak boleh kosong';
+                        return 'Stok minimum tidak boleh kosong';
                       }
                       final num = int.tryParse(value);
                       if (num == null || num < 0) {
@@ -629,19 +873,19 @@ class ItemManagementView extends GetView<ItemManagementController> {
                       return null;
                     },
                     prefixIcon: const Icon(Icons.looks_one_outlined),
-                    infoTooltip: 'Jumlah stok di awal periode (unit)',
+                    infoTooltip: 'Batas minimum stok sebelum dianggap menipis',
                   ),
                   const SizedBox(height: 16),
 
-                  // Stok Akhir field
+                  // Stok Saat Ini field
                   CustomInput(
-                    label: 'Stok Akhir',
-                    hint: '2',
-                    controller: controller.stokAkhirController,
+                    label: 'Stok Saat Ini',
+                    hint: '15',
+                    controller: controller.stokSekarangController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Stok akhir tidak boleh kosong';
+                        return 'Stok saat ini tidak boleh kosong';
                       }
                       final num = int.tryParse(value);
                       if (num == null || num < 0) {
@@ -650,20 +894,19 @@ class ItemManagementView extends GetView<ItemManagementController> {
                       return null;
                     },
                     prefixIcon: const Icon(Icons.looks_two_outlined),
-                    infoTooltip: 'Jumlah stok di akhir periode (unit)',
-                    onChanged: (_) => controller.calculateHariPerkiraanHabis(),
+                    infoTooltip: 'Jumlah stok yang tersedia sekarang (unit)',
                   ),
                   const SizedBox(height: 16),
 
-                  // Barang Masuk field
+                  // Lead Time field
                   CustomInput(
-                    label: 'Jumlah Barang Masuk',
+                    label: 'Lead Time (Hari)',
                     hint: '7',
-                    controller: controller.barangMasukController,
+                    controller: controller.leadTimeController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Jumlah barang masuk tidak boleh kosong';
+                        return 'Lead time tidak boleh kosong';
                       }
                       final num = int.tryParse(value);
                       if (num == null || num < 0) {
@@ -671,121 +914,37 @@ class ItemManagementView extends GetView<ItemManagementController> {
                       }
                       return null;
                     },
-                    prefixIcon: const Icon(Icons.input_outlined),
-                    infoTooltip:
-                        'Total barang yang masuk/terbeli selama periode (unit)',
+                    prefixIcon: const Icon(Icons.access_time_outlined),
+                    infoTooltip: 'Waktu yang dibutuhkan untuk restock (hari)',
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
-                  // Barang Keluar field
-                  CustomInput(
-                    label: 'Jumlah Barang Keluar',
-                    hint: '10',
-                    controller: controller.barangKeluarController,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Jumlah barang keluar tidak boleh kosong';
-                      }
-                      final num = int.tryParse(value);
-                      if (num == null || num < 0) {
-                        return 'Masukkan angka yang valid';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.output_outlined),
-                    infoTooltip:
-                        'Total barang yang keluar/terjual selama periode (unit)',
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Rata-rata Pemakaian Bulanan field
-                  CustomInput(
-                    label: 'Rata-rata Pemakaian Bulanan',
-                    hint: '0.83',
-                    controller: controller.rataRataPemakaianController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
+                  // Info note about status
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.info.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.info, width: 1),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Rata-rata pemakaian tidak boleh kosong';
-                      }
-                      final num = double.tryParse(value);
-                      if (num == null || num < 0) {
-                        return 'Masukkan angka yang valid';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.calendar_month_outlined),
-                    infoTooltip: 'Rata-rata jumlah (unit) pemakaian per bulan',
-                    onChanged: (_) {
-                      controller.calculateHariPerkiraanHabis();
-                      controller.calculateFluktuasiPemakaian();
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Frekuensi Pembaruan Stok field
-                  CustomInput(
-                    label: 'Frekuensi Pembaruan Stok',
-                    hint: '1',
-                    controller: controller.frekuensiPembaruanController,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Frekuensi pembaruan tidak boleh kosong';
-                      }
-                      final num = int.tryParse(value);
-                      if (num == null || num < 0) {
-                        return 'Masukkan angka yang valid';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.update_outlined),
-                    infoTooltip:
-                        'Berapa kali barang diisi ulang dalam satu periode',
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Hari Perkiraan Stok Habis field (otomatis)
-                  CustomInput(
-                    label: 'Hari Perkiraan Stok Habis (otomatis)',
-                    hint: '74.07',
-                    controller: controller.hariPerkiraanHabisController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: AppColors.info,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Status stok akan dihitung otomatis berdasarkan Stok Saat Ini dan Stok Minimum.',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    enabled: false,
-                    prefixIcon: const Icon(Icons.timer_outlined),
-                    infoTooltip:
-                        'Estimasi berapa hari hingga stok habis -> stok_akhir / (rata_rata_pemakaian_bulanan / 30)',
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Fluktuasi Pemakaian Bulanan field (otomatis)
-                  CustomInput(
-                    label: 'Fluktuasi Pemakaian Bulanan (otomatis)',
-                    hint: '0.16',
-                    controller: controller.fluktuasiPemakaianController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    enabled: false,
-                    prefixIcon: const Icon(Icons.trending_up_outlined),
-                    infoTooltip:
-                        'Standar deviasi pemakaian bulanan -> 0.2 x rata_rata_pemakaian_bulanan',
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Harga field (nullable)
-                  CustomInput(
-                    label: 'Harga (Rupiah)',
-                    hint: '5000',
-                    controller: controller.hargaController,
-                    keyboardType: TextInputType.number,
-                    prefixIcon: const Icon(Icons.payments_outlined),
-                    infoTooltip: 'Harga per unit barang (opsional, bisa diisi nanti)',
                   ),
                   const SizedBox(height: 24),
 

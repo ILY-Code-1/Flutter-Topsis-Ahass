@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class AuthService extends GetxService {
   final GetStorage _storage = GetStorage();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Observable untuk status login
   final RxBool isLoggedIn = false.obs;
@@ -54,60 +56,72 @@ class AuthService extends GetxService {
     return difference > _sessionDuration;
   }
 
-  // Login dengan username dan password dari Firebase
-  // Login dengan username dan password hardcode
+  // Login dengan username dan password dari Firestore
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
-      // Simulasi loading
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Query ke Firestore collection 'users'
+      final querySnapshot = await _firestore
+          .collection('users')
+          .where('username', isEqualTo: username)
+          .where('password', isEqualTo: password)
+          .limit(1)
+          .get();
 
-      // Cek username dan password hardcode
-      if (username == 'admin' && password == 'admin123') {
-        // Login berhasil sebagai admin
-        final role = 'admin';
-
-        await _storage.write(_keyIsLoggedIn, true);
-        await _storage.write(_keyUsername, username);
-        await _storage.write(_keyRole, role);
-        await _storage.write(
-          _keyLoginTimestamp,
-          DateTime.now().millisecondsSinceEpoch,
-        );
-
-        isLoggedIn.value = true;
-        currentUsername.value = username;
-        currentRole.value = role;
-
+      // Cek apakah user ditemukan
+      if (querySnapshot.docs.isEmpty) {
         return {
-          'success': true,
-          'message': 'Login berhasil sebagai Admin',
-          'user': {'username': username, 'role': role, 'isActive': true},
+          'success': false,
+          'message': 'Username atau password salah',
         };
-      } else if (username == 'user' && password == 'user123') {
-        // Login berhasil sebagai user
-        final role = 'user';
-
-        await _storage.write(_keyIsLoggedIn, true);
-        await _storage.write(_keyUsername, username);
-        await _storage.write(_keyRole, role);
-        await _storage.write(
-          _keyLoginTimestamp,
-          DateTime.now().millisecondsSinceEpoch,
-        );
-
-        isLoggedIn.value = true;
-        currentUsername.value = username;
-        currentRole.value = role;
-
-        return {
-          'success': true,
-          'message': 'Login berhasil sebagai User',
-          'user': {'username': username, 'role': role, 'isActive': true},
-        };
-      } else {
-        // Username atau password salah
-        return {'success': false, 'message': 'Username atau password salah'};
       }
+
+      // Ambil data user
+      final userDoc = querySnapshot.docs.first;
+      final userData = userDoc.data();
+
+      // Ambil role user
+      final role = userData['role'] as String? ?? 'staff';
+      final isActive = userData['isActive'] as bool? ?? true;
+
+      // Cek apakah user aktif
+      if (!isActive) {
+        return {
+          'success': false,
+          'message': 'Akun ini dinonaktifkan. Hubungi admin.',
+        };
+      }
+
+      // Cek role yang valid
+      if (role != 'admin' && role != 'staff') {
+        return {
+          'success': false,
+          'message': 'Role user tidak valid. Hubungi admin.',
+        };
+      }
+
+      // Simpan ke local storage
+      await _storage.write(_keyIsLoggedIn, true);
+      await _storage.write(_keyUsername, username);
+      await _storage.write(_keyRole, role);
+      await _storage.write(
+        _keyLoginTimestamp,
+        DateTime.now().millisecondsSinceEpoch,
+      );
+
+      // Update observable
+      isLoggedIn.value = true;
+      currentUsername.value = username;
+      currentRole.value = role;
+
+      return {
+        'success': true,
+        'message': 'Login berhasil sebagai ${role == 'admin' ? 'Admin' : 'Staff'}',
+        'user': {
+          'username': username,
+          'role': role,
+          'isActive': isActive,
+        },
+      };
     } catch (e) {
       return {
         'success': false,
@@ -154,6 +168,5 @@ class AuthService extends GetxService {
   bool get isAdmin => currentRole.value == 'admin';
 
   // Cek apakah user adalah staff
-  bool get isStaff =>
-      currentRole.value == 'staff' || currentRole.value == 'user';
+  bool get isStaff => currentRole.value == 'staff';
 }

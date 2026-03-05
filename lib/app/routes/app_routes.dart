@@ -16,4 +16,5 @@ abstract class Routes {
   static const uploadExcel = '/upload-excel';
   static const adminDashboard = '/admin-dashboard';
   static const staffDashboard = '/staff-dashboard';
+  static const staffStock = '/staff-stock';
 }

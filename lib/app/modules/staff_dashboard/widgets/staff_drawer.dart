@@ -101,11 +101,11 @@ class StaffDrawer extends StatelessWidget {
                   _DrawerMenuItem(
                     icon: Icons.inventory_2_rounded,
                     title: 'Kelola Stock',
-                    isActive: currentRoute == '/item-management',
+                    isActive: currentRoute == '/staff-stock',
                     onTap: () {
                       Get.back();
-                      if (currentRoute != '/item-management') {
-                        Get.toNamed('/item-management');
+                      if (currentRoute != '/staff-stock') {
+                        Get.toNamed('/staff-stock');
                       }
                     },
                   ),
@@ -121,12 +121,17 @@ class StaffDrawer extends StatelessWidget {
                     },
                   ),
                   _DrawerMenuItem(
-                    icon: Icons.move_to_inbox_rounded,
+                    icon: Icons.exit_to_app_rounded,
                     title: 'Barang Keluar',
                     isActive: false,
                     onTap: () {
                       Get.back();
-                      Get.toNamed('/form');
+                      // TODO: Update with actual route when implemented
+                      Get.snackbar(
+                        'Info',
+                        'Barang Keluar page will be implemented',
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                     },
                   ),
                 ],

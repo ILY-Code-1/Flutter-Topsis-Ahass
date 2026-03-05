@@ -44,7 +44,19 @@
       "Bash(ls:*)",
       "Bash(dir \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\assets\\icons\" /b)",
       "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\" && dir /b)",
-      "Bash(Get-ChildItem \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\" -Directory | Select-Object -ExpandProperty Name)"
+      "Bash(Get-ChildItem \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\\lib\\app\\modules\" -Directory | Select-Object -ExpandProperty Name)",
+      "Read(lib/app/modules/item_management/views/**)",
+      "Bash(flutter analyze --no-pub 2>&1 | head -50)",
+      "Bash(flutter analyze --no-pub)",
+      "Bash(flutter analyze lib/app/modules/item_management 2>&1 | grep -E \"(error|warning)\" | head -20)",
+      "Bash(flutter analyze lib/app/models/item_model.dart lib/app/services/item_service.dart lib/app/modules/item_management)",
+      "Bash(flutter analyze lib/app/modules/staff_stock)",
+      "Read(lib/app/modules/staff_stock/views/**)",
+      "Read(lib/app/modules/staff_dashboard/widgets/**)",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\" ; flutter analyze 2>&1 | head -100)",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\" ; flutter analyze lib/app/modules/staff_stock lib/app/widgets/stock_table_widget.dart)",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\" ; sed -n '300,305p' lib/app/modules/staff_stock/views/staff_stock_view.dart)",
+      "Bash(cd \"C:\\Flutter\\FlutterProjects\\Flutter-Topsis-Ahass\" ; flutter analyze lib/app/modules/staff_stock/views/staff_stock_view.dart)"
     ]
   }
 }

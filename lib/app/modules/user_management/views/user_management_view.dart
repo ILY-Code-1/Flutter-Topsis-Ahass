@@ -17,7 +17,7 @@ class UserManagementView extends GetView<UserManagementController> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(Icons.people, color: Colors.white, size: 24),
@@ -56,7 +56,7 @@ class UserManagementView extends GetView<UserManagementController> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.softPink.withOpacity(0.3), Colors.white],
+            colors: [AppColors.softPink.withValues(alpha: 0.3), Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -78,7 +78,7 @@ class UserManagementView extends GetView<UserManagementController> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.hondaRed.withOpacity(0.1),
+                          color: AppColors.hondaRed.withValues(alpha: 0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -87,7 +87,7 @@ class UserManagementView extends GetView<UserManagementController> {
                     child: Icon(
                       Icons.people_outline,
                       size: 80,
-                      color: AppColors.hondaRed.withOpacity(0.5),
+                      color: AppColors.hondaRed.withValues(alpha: 0.5),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -130,7 +130,7 @@ class UserManagementView extends GetView<UserManagementController> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -150,37 +150,35 @@ class UserManagementView extends GetView<UserManagementController> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.hondaRed.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.group,
-                                          size: 16,
-                                          color: AppColors.hondaRed,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Total: ${controller.users.length} user',
-                                          style: AppTextStyles.bodyMedium
-                                              .copyWith(
-                                                color: AppColors.hondaRed,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.hondaRed.withValues(
+                                    alpha: 0.1,
                                   ),
-                                ],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.group,
+                                      size: 16,
+                                      color: AppColors.hondaRed,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Total: ${controller.users.length} user',
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        color: AppColors.hondaRed,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -200,27 +198,27 @@ class UserManagementView extends GetView<UserManagementController> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           gradient: const LinearGradient(
-            colors: [AppColors.hondaRed, AppColors.hondaRedLight],
+            colors: [Color(0xFF2E7D32), Color(0xFF43A047)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.hondaRed.withOpacity(0.5),
+              color: const Color(0xFF2E7D32).withValues(alpha: 0.5),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: FloatingActionButton.extended(
-          onPressed: () => controller.showUserFormDialog(),
-          // backgroundColor: Colors.transparent,
+          onPressed: controller.showAddUserDialog,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           elevation: 0,
-          icon: const Icon(Icons.person_add, size: 24),
+          icon: const Icon(Icons.person_add_rounded, size: 24),
           label: const Text(
-            'Tambah User',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            '+ TAMBAH USER',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
         ),
       ),
@@ -248,7 +246,7 @@ class UserManagementView extends GetView<UserManagementController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -257,22 +255,15 @@ class UserManagementView extends GetView<UserManagementController> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: controller.users.map((user) {
-          final isActive = user['isActive'] ?? true;
-          final role = user['role'] ?? 'staff';
-
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.white, AppColors.softBlue.withOpacity(0.3)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.border, width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.hondaRed.withOpacity(0.05),
+                  color: AppColors.hondaRed.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -288,12 +279,7 @@ class UserManagementView extends GetView<UserManagementController> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.hondaRed.withOpacity(0.2),
-                              AppColors.hondaRed.withOpacity(0.1),
-                            ],
-                          ),
+                          color: AppColors.hondaRed.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -308,7 +294,7 @@ class UserManagementView extends GetView<UserManagementController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              user['username'] ?? '',
+                              user.username,
                               style: AppTextStyles.bodyLarge.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
@@ -319,110 +305,8 @@ class UserManagementView extends GetView<UserManagementController> {
                               spacing: 8,
                               runSpacing: 8,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: role == 'admin'
-                                          ? [
-                                              Colors.purple.shade400,
-                                              Colors.purple.shade600,
-                                            ]
-                                          : [
-                                              Colors.blue.shade400,
-                                              Colors.blue.shade600,
-                                            ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                            (role == 'admin'
-                                                    ? Colors.purple
-                                                    : Colors.blue)
-                                                .withOpacity(0.3),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        role == 'admin'
-                                            ? Icons.admin_panel_settings
-                                            : Icons.person,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        role.toUpperCase(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: isActive
-                                          ? [
-                                              Colors.green.shade400,
-                                              Colors.green.shade600,
-                                            ]
-                                          : [
-                                              Colors.red.shade400,
-                                              Colors.red.shade600,
-                                            ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                            (isActive
-                                                    ? Colors.green
-                                                    : Colors.red)
-                                                .withOpacity(0.3),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isActive
-                                            ? Icons.check_circle
-                                            : Icons.cancel,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        isActive ? 'AKTIF' : 'NONAKTIF',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                _buildRoleBadge(user.role),
+                                _buildStatusBadge(user.isActive),
                               ],
                             ),
                           ],
@@ -436,19 +320,7 @@ class UserManagementView extends GetView<UserManagementController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.edit_outlined),
-                          color: Colors.blue.shade700,
-                          onPressed: () =>
-                              controller.showUserFormDialog(user: user),
-                          tooltip: 'Edit',
-                        ),
-                      ),
+                      _buildToggleButton(user.id, user.isActive, compact: true),
                       const SizedBox(width: 8),
                       Container(
                         decoration: BoxDecoration(
@@ -458,10 +330,8 @@ class UserManagementView extends GetView<UserManagementController> {
                         child: IconButton(
                           icon: const Icon(Icons.delete_outline),
                           color: Colors.red.shade700,
-                          onPressed: () => controller.deleteUser(
-                            user['id'],
-                            user['username'],
-                          ),
+                          onPressed: () =>
+                              controller.deleteUser(user.id, user.username),
                           tooltip: 'Hapus',
                         ),
                       ),
@@ -487,7 +357,7 @@ class UserManagementView extends GetView<UserManagementController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -506,7 +376,7 @@ class UserManagementView extends GetView<UserManagementController> {
             dataRowMinHeight: 70,
             dataRowMaxHeight: 80,
             headingRowColor: WidgetStateProperty.all(
-              AppColors.hondaRed.withOpacity(0.08),
+              AppColors.hondaRed.withValues(alpha: 0.08),
             ),
             columns: [
               DataColumn(
@@ -589,26 +459,25 @@ class UserManagementView extends GetView<UserManagementController> {
             rows: controller.users.asMap().entries.map((entry) {
               final index = entry.key;
               final user = entry.value;
-              final isActive = user['isActive'] ?? true;
-              final role = user['role'] ?? 'staff';
 
               return DataRow(
-                color: WidgetStateProperty.resolveWith<Color>((
-                  Set<WidgetState> states,
-                ) {
-                  if (index.isEven) {
-                    return AppColors.softBlue.withOpacity(0.3);
-                  }
-                  return Colors.white;
-                }),
+                color: WidgetStateProperty.resolveWith<Color>(
+                  (Set<WidgetState> states) {
+                    if (index.isEven) {
+                      return AppColors.softBlue.withValues(alpha: 0.3);
+                    }
+                    return Colors.white;
+                  },
+                ),
                 cells: [
+                  // Username
                   DataCell(
                     Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.hondaRed.withOpacity(0.1),
+                            color: AppColors.hondaRed.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -619,7 +488,7 @@ class UserManagementView extends GetView<UserManagementController> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          user['username'] ?? '',
+                          user.username,
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -628,116 +497,19 @@ class UserManagementView extends GetView<UserManagementController> {
                       ],
                     ),
                   ),
-                  DataCell(
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: role == 'admin'
-                              ? [Colors.purple.shade400, Colors.purple.shade600]
-                              : [Colors.blue.shade400, Colors.blue.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                (role == 'admin' ? Colors.purple : Colors.blue)
-                                    .withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            role == 'admin'
-                                ? Icons.admin_panel_settings
-                                : Icons.person,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            role.toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isActive
-                              ? [Colors.green.shade400, Colors.green.shade600]
-                              : [Colors.red.shade400, Colors.red.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isActive ? Colors.green : Colors.red)
-                                .withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            isActive ? Icons.check_circle : Icons.cancel,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            isActive ? 'AKTIF' : 'NONAKTIF',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+
+                  // Role
+                  DataCell(_buildRoleBadge(user.role)),
+
+                  // Status
+                  DataCell(_buildStatusBadge(user.isActive)),
+
+                  // Aksi
                   DataCell(
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.edit_outlined),
-                            color: Colors.blue.shade700,
-                            tooltip: 'Edit',
-                            onPressed: () =>
-                                controller.showUserFormDialog(user: user),
-                          ),
-                        ),
+                        _buildToggleButton(user.id, user.isActive),
                         const SizedBox(width: 8),
                         Container(
                           decoration: BoxDecoration(
@@ -748,10 +520,8 @@ class UserManagementView extends GetView<UserManagementController> {
                             icon: const Icon(Icons.delete_outline),
                             color: Colors.red.shade700,
                             tooltip: 'Hapus',
-                            onPressed: () => controller.deleteUser(
-                              user['id'],
-                              user['username'],
-                            ),
+                            onPressed: () =>
+                                controller.deleteUser(user.id, user.username),
                           ),
                         ),
                       ],
@@ -761,6 +531,144 @@ class UserManagementView extends GetView<UserManagementController> {
               );
             }).toList(),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRoleBadge(String role) {
+    final isAdmin = role == 'admin';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isAdmin
+              ? [Colors.purple.shade400, Colors.purple.shade600]
+              : [Colors.blue.shade400, Colors.blue.shade600],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: (isAdmin ? Colors.purple : Colors.blue).withValues(
+              alpha: 0.3,
+            ),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isAdmin ? Icons.admin_panel_settings : Icons.person,
+            color: Colors.white,
+            size: 14,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            role.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(bool isActive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isActive
+              ? [Colors.green.shade400, Colors.green.shade600]
+              : [Colors.red.shade400, Colors.red.shade600],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: (isActive ? Colors.green : Colors.red).withValues(
+              alpha: 0.3,
+            ),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isActive ? Icons.check_circle : Icons.cancel,
+            color: Colors.white,
+            size: 14,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isActive ? 'AKTIF' : 'NON-AKTIF',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToggleButton(
+    String userId,
+    bool isActive, {
+    bool compact = false,
+  }) {
+    final color = isActive ? Colors.orange.shade700 : Colors.green.shade700;
+    final bgColor = isActive ? Colors.orange.shade50 : Colors.green.shade50;
+    final icon =
+        isActive ? Icons.toggle_off_rounded : Icons.toggle_on_rounded;
+    final label = isActive ? 'Nonaktifkan' : 'Aktifkan';
+
+    if (compact) {
+      return Container(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: IconButton(
+          icon: Icon(icon),
+          color: color,
+          onPressed: () => controller.toggleStatus(userId, isActive),
+          tooltip: label,
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: TextButton.icon(
+        onPressed: () => controller.toggleStatus(userId, isActive),
+        icon: Icon(icon, color: color, size: 18),
+        label: Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
       ),
     );

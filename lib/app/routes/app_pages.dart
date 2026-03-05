@@ -25,6 +25,8 @@ import '../modules/admin_dashboard/bindings/admin_dashboard_binding.dart';
 import '../modules/admin_dashboard/views/admin_dashboard_view.dart';
 import '../modules/staff_dashboard/bindings/staff_dashboard_binding.dart';
 import '../modules/staff_dashboard/views/staff_dashboard_view.dart';
+import '../modules/staff_stock/bindings/staff_stock_binding.dart';
+import '../modules/staff_stock/views/staff_stock_view.dart';
 import '../middlewares/auth_middleware.dart';
 
 part 'app_routes.dart';
@@ -133,6 +135,14 @@ class AppPages {
       name: Routes.staffDashboard,
       page: () => const StaffDashboardView(),
       binding: StaffDashboardBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.staffStock,
+      page: () => const StaffStockView(),
+      binding: StaffStockBinding(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
       middlewares: [AuthMiddleware()],
