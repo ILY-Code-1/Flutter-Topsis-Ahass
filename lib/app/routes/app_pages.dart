@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-
-import '../modules/home/bindings/home_binding.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/topsis/bindings/topsis_binding.dart';

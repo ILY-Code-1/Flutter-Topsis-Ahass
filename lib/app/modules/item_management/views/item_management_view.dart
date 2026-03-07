@@ -293,7 +293,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                 child: ElevatedButton.icon(
                                   onPressed: () {
                                     // Navigate to TOPSIS analysis
-                                    Get.toNamed('/topsis');
+                                    // Get.toNamed('/topsis');
                                   },
                                   icon: const Icon(Icons.analytics, size: 20),
                                   label: const Text(
