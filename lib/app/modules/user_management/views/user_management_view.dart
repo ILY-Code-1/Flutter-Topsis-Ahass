@@ -320,6 +320,19 @@ class UserManagementView extends GetView<UserManagementController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.edit_outlined),
+                          color: Colors.blue.shade700,
+                          onPressed: () => controller.showEditUserDialog(user),
+                          tooltip: 'Edit',
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       _buildToggleButton(user.id, user.isActive, compact: true),
                       const SizedBox(width: 8),
                       Container(
@@ -509,6 +522,19 @@ class UserManagementView extends GetView<UserManagementController> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.edit_outlined),
+                            color: Colors.blue.shade700,
+                            tooltip: 'Edit',
+                            onPressed: () => controller.showEditUserDialog(user),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         _buildToggleButton(user.id, user.isActive),
                         const SizedBox(width: 8),
                         Container(

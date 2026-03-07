@@ -56,10 +56,10 @@ class StaffDashboardController extends GetxController {
   }
 
   void navigateToBarangMasuk() {
-    Get.toNamed('/form');
+    Get.toNamed('/barang-masuk');
   }
 
   void navigateToBarangKeluar() {
-    Get.toNamed('/form');
+    Get.toNamed('/barang-keluar');
   }
 }

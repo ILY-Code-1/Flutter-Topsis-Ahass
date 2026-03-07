@@ -63,10 +63,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              AppColors.softPink.withOpacity(0.3),
-              Colors.white,
-            ],
+            colors: [AppColors.softPink.withOpacity(0.3), Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -171,8 +168,12 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                           vertical: 6,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.hondaRed.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(20),
+                                          color: AppColors.hondaRed.withOpacity(
+                                            0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -205,7 +206,9 @@ class ItemManagementView extends GetView<ItemManagementController> {
                               // Month Filter Dropdown
                               Expanded(
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: AppColors.border),
                                     borderRadius: BorderRadius.circular(8),
@@ -214,7 +217,11 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                     child: DropdownButton<String>(
                                       isExpanded: true,
                                       hint: const Text('Pilih Bulan'),
-                                      value: controller.selectedMonth.value.isNotEmpty
+                                      value:
+                                          controller
+                                              .selectedMonth
+                                              .value
+                                              .isNotEmpty
                                           ? controller.selectedMonth.value
                                           : null,
                                       items: const [
@@ -273,7 +280,8 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                       ],
                                       onChanged: (value) {
                                         // Month filter will be implemented in future
-                                        controller.selectedMonth.value = value ?? '';
+                                        controller.selectedMonth.value =
+                                            value ?? '';
                                       },
                                     ),
                                   ),
@@ -290,7 +298,9 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                   icon: const Icon(Icons.analytics, size: 20),
                                   label: const Text(
                                     'Mulai Analisis',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.success,
@@ -314,7 +324,8 @@ class ItemManagementView extends GetView<ItemManagementController> {
                         showActions: true,
                         isEditable: true,
                         onRefresh: controller.fetchItems,
-                        showTransactions: false, // Admin doesn't need transaction counts
+                        showTransactions:
+                            false, // Admin doesn't need transaction counts
                       ),
                     ),
                   ],
@@ -477,14 +488,8 @@ class ItemManagementView extends GetView<ItemManagementController> {
                         'Lead Time: ${item.leadTime} hari',
                         Icons.access_time_outlined,
                       ),
-                      _buildInfoChip(
-                        'Total Keluar: TBD',
-                        Icons.output,
-                      ),
-                      _buildInfoChip(
-                        'Frekuensi: TBD',
-                        Icons.update,
-                      ),
+                      _buildInfoChip('Total Keluar: TBD', Icons.output),
+                      _buildInfoChip('Frekuensi: TBD', Icons.update),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -783,6 +788,12 @@ class ItemManagementView extends GetView<ItemManagementController> {
       controller.loadItemToForm(item);
     }
 
+    String? _normalizeKategori(String value) {
+      final v = value.trim().toLowerCase();
+      const options = ['sparepart', 'electrical', 'oli'];
+      return options.contains(v) ? v : null;
+    }
+
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -820,7 +831,8 @@ class ItemManagementView extends GetView<ItemManagementController> {
                       return null;
                     },
                     prefixIcon: const Icon(Icons.qr_code_outlined),
-                    infoTooltip: 'Kode unik untuk barang (tidak bisa diubah setelah dibuat)',
+                    infoTooltip:
+                        'Kode unik untuk barang (tidak bisa diubah setelah dibuat)',
                   ),
                   const SizedBox(height: 16),
 
@@ -840,19 +852,44 @@ class ItemManagementView extends GetView<ItemManagementController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Kategori field
-                  CustomInput(
-                    label: 'Kategori',
-                    hint: 'Oli',
-                    controller: controller.kategoriController,
+                  // Kategori field (Dropdown)
+                  DropdownButtonFormField<String>(
+                    initialValue: _normalizeKategori(
+                      controller.kategoriController.text,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Kategori',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      prefixIcon: const Icon(Icons.category_outlined),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.hondaRed,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'sparepart',
+                        child: Text('sparepart'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'electrical',
+                        child: Text('electrical'),
+                      ),
+                      DropdownMenuItem(value: 'oli', child: Text('oli')),
+                    ],
+                    onChanged: (val) {
+                      controller.kategoriController.text = val ?? '';
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Kategori tidak boleh kosong';
                       }
                       return null;
                     },
-                    prefixIcon: const Icon(Icons.category_outlined),
-                    infoTooltip: 'Kategori barang (contoh: Oli, Sparepart, Aksesoris)',
                   ),
                   const SizedBox(height: 16),
 

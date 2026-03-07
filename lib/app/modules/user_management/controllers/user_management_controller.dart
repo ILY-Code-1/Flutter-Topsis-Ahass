@@ -4,6 +4,7 @@ import '../../../models/user_model.dart';
 import '../../../services/user_service.dart';
 import '../../../themes/themes.dart';
 import '../widgets/add_user_dialog.dart';
+import '../widgets/edit_user_dialog.dart';
 
 class UserManagementController extends GetxController {
   final UserService _userService = Get.find<UserService>();
@@ -72,6 +73,55 @@ class UserManagementController extends GetxController {
       Get.snackbar(
         'Error',
         'Gagal menambahkan user: ${e.toString()}',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        snackPosition: SnackPosition.TOP,
+      );
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void showEditUserDialog(UserModel user) {
+    Get.dialog(
+      EditUserDialog(
+        user: user,
+        onSubmit: (username, password, role) =>
+            _updateUser(user.id, username, password, role),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  Future<void> _updateUser(
+    String userId,
+    String username,
+    String password,
+    String role,
+  ) async {
+    try {
+      isLoading.value = true;
+      final updated = UserModel(
+        id: userId,
+        username: username,
+        password: password,
+        role: role,
+        isActive: users.firstWhere((u) => u.id == userId).isActive,
+      );
+      await _userService.updateUser(updated);
+      Get.snackbar(
+        'Berhasil',
+        'Perubahan user berhasil disimpan',
+        backgroundColor: Colors.green.shade100,
+        colorText: Colors.green.shade900,
+        snackPosition: SnackPosition.TOP,
+      );
+      await fetchUsers();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal mengubah user: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
         snackPosition: SnackPosition.TOP,

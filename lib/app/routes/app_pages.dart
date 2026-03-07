@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/topsis/bindings/topsis_binding.dart';
@@ -27,6 +26,10 @@ import '../modules/staff_dashboard/bindings/staff_dashboard_binding.dart';
 import '../modules/staff_dashboard/views/staff_dashboard_view.dart';
 import '../modules/staff_stock/bindings/staff_stock_binding.dart';
 import '../modules/staff_stock/views/staff_stock_view.dart';
+import '../modules/barang_masuk/bindings/barang_masuk_binding.dart';
+import '../modules/barang_masuk/views/barang_masuk_page.dart';
+import '../modules/barang_keluar/bindings/barang_keluar_binding.dart';
+import '../modules/barang_keluar/views/barang_keluar_page.dart';
 import '../middlewares/auth_middleware.dart';
 
 part 'app_routes.dart';
@@ -39,8 +42,8 @@ class AppPages {
   static final routes = [
     GetPage(
       name: Routes.home,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
+      page: () => const StaffDashboardView(),
+      binding: StaffDashboardBinding(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
       middlewares: [AuthMiddleware()],
@@ -100,6 +103,14 @@ class AppPages {
       middlewares: [AuthMiddleware()],
     ),
     GetPage(
+      name: Routes.adminStock,
+      page: () => const ItemManagementView(),
+      binding: ItemManagementBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
       name: Routes.quickCalc,
       page: () => const QuickCalcView(),
       binding: QuickCalcBinding(),
@@ -143,6 +154,22 @@ class AppPages {
       name: Routes.staffStock,
       page: () => const StaffStockView(),
       binding: StaffStockBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.barangMasuk,
+      page: () => const BarangMasukPage(),
+      binding: BarangMasukBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.barangKeluar,
+      page: () => const BarangKeluarPage(),
+      binding: BarangKeluarBinding(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
       middlewares: [AuthMiddleware()],

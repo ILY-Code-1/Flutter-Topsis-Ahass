@@ -32,10 +32,9 @@ class UserService extends GetxService {
 
   Future<void> toggleStatus(String userId, bool currentStatus) async {
     try {
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .update({'isActive': !currentStatus});
+      await _firestore.collection(_collection).doc(userId).update({
+        'isActive': !currentStatus,
+      });
     } catch (e) {
       throw Exception('Failed to toggle user status: $e');
     }
@@ -46,6 +45,17 @@ class UserService extends GetxService {
       await _firestore.collection(_collection).doc(userId).delete();
     } catch (e) {
       throw Exception('Failed to delete user: $e');
+    }
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    try {
+      await _firestore
+          .collection(_collection)
+          .doc(user.id)
+          .update(user.toMap());
+    } catch (e) {
+      throw Exception('Failed to update user: $e');
     }
   }
 }

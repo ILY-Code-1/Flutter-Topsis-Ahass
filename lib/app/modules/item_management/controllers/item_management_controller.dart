@@ -50,7 +50,6 @@ class ItemManagementController extends GetxController {
 
       final fetchedItems = await _itemService.getItems();
       items.value = fetchedItems;
-
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -120,7 +119,10 @@ class ItemManagementController extends GetxController {
       final leadTime = int.parse(leadTimeController.text);
 
       // Calculate status stok automatically
-      final statusStok = ItemModel.calculateStatusStok(stokSekarang, stokMinimum);
+      final statusStok = ItemModel.calculateStatusStok(
+        stokSekarang,
+        stokMinimum,
+      );
 
       final item = ItemModel(
         idBarang: idBarang,
@@ -173,7 +175,6 @@ class ItemManagementController extends GetxController {
 
       // Refresh list
       await fetchItems();
-
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -191,9 +192,7 @@ class ItemManagementController extends GetxController {
   void deleteItem(String idBarang, String namaBarang) {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
             Icon(Icons.warning, color: Colors.red),
@@ -206,10 +205,7 @@ class ItemManagementController extends GetxController {
           style: const TextStyle(fontSize: 16),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Batal'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
           ElevatedButton(
             onPressed: () async {
               Get.back(); // Close dialog
@@ -242,7 +238,6 @@ class ItemManagementController extends GetxController {
 
       // Refresh list
       await fetchItems();
-
     } catch (e) {
       Get.snackbar(
         'Error',

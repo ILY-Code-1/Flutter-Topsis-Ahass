@@ -112,26 +112,23 @@ class StaffDrawer extends StatelessWidget {
                   _DrawerMenuItem(
                     icon: Icons.add_business_rounded,
                     title: 'Barang Masuk',
-                    isActive: currentRoute == '/form',
+                    isActive: currentRoute == '/barang-masuk',
                     onTap: () {
                       Get.back();
-                      if (currentRoute != '/form') {
-                        Get.toNamed('/form');
+                      if (currentRoute != '/barang-masuk') {
+                        Get.toNamed('/barang-masuk');
                       }
                     },
                   ),
                   _DrawerMenuItem(
                     icon: Icons.exit_to_app_rounded,
                     title: 'Barang Keluar',
-                    isActive: false,
+                    isActive: currentRoute == '/barang-keluar',
                     onTap: () {
                       Get.back();
-                      // TODO: Update with actual route when implemented
-                      Get.snackbar(
-                        'Info',
-                        'Barang Keluar page will be implemented',
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
+                      if (currentRoute != '/barang-keluar') {
+                        Get.toNamed('/barang-keluar');
+                      }
                     },
                   ),
                 ],
