@@ -32,10 +32,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
             ),
             const Text(
               'Selamat datang di dashboard',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 12),
             ),
           ],
         ),
@@ -82,30 +79,39 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
             // Main Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                // padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Welcome Section
-                    _buildWelcomeSection(context),
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        children: [
+                          _buildWelcomeSection(context),
+                          const SizedBox(height: 32),
+
+                          // Stats Cards
+                          Responsive.isMobile(context)
+                              ? _buildMobileLayout()
+                              : _buildDesktopLayout(),
+
+                          const SizedBox(height: 32),
+
+                          // Quick Actions
+                          _buildQuickActions(context),
+                        ],
+                      ),
+                    ),
+
                     const SizedBox(height: 32),
 
-                    // Stats Cards
-                    Responsive.isMobile(context)
-                        ? _buildMobileLayout()
-                        : _buildDesktopLayout(),
-
-                    const SizedBox(height: 32),
-
-                    // Quick Actions
-                    _buildQuickActions(context),
+                    // Footer
+                    _buildFooter(),
                   ],
                 ),
               ),
             ),
-
-            // Footer
-            _buildFooter(),
           ],
         );
       }),
@@ -132,10 +138,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              AppColors.hondaRed,
-              AppColors.hondaRedDark,
-            ],
+            colors: [AppColors.hondaRed, AppColors.hondaRedDark],
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -196,30 +199,30 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
     return Column(
       children: [
         _buildStatCard(
-          title: 'Jumlah Perhitungan',
-          description: 'Total analisis TOPSIS yang tersimpan',
-          value: controller.totalCalculations.value.toString(),
-          icon: Icons.calculate_rounded,
+          title: 'Total Item',
+          description: 'Total variasi sparepart terdaftar',
+          value: controller.totalItems.value.toString(),
+          icon: Icons.inventory_2_rounded,
           color: AppColors.hondaRed,
           delay: 0,
         ),
         const SizedBox(height: 16),
-        _buildStatCard(
+        _buildTransactionCard(
           title: 'Barang Masuk',
-          description: 'Total qty barang masuk bulan ini',
-          value: controller.totalItems.value.toString(),
-          icon: Icons.inventory_2_rounded,
+          icon: Icons.add_business_rounded,
           color: AppColors.success,
           delay: 150,
+          frekuensi: controller.frekuensiBarangMasuk.value,
+          totalQty: controller.totalBarangMasuk.value,
         ),
         const SizedBox(height: 16),
-        _buildStatCard(
+        _buildTransactionCard(
           title: 'Barang Keluar',
-          description: 'Total qty barang keluar bulan ini',
-          value: '0', // Will need to be updated in controller when data is available
-          icon: Icons.trending_up_rounded,
+          icon: Icons.move_to_inbox_rounded,
           color: AppColors.warning,
           delay: 300,
+          frekuensi: controller.frekuensiBarangKeluar.value,
+          totalQty: controller.totalBarangKeluar.value,
         ),
       ],
     );
@@ -230,37 +233,143 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       children: [
         Expanded(
           child: _buildStatCard(
-            title: 'Jumlah Perhitungan',
-            description: 'Total analisis TOPSIS yang tersimpan',
-            value: controller.totalCalculations.value.toString(),
-            icon: Icons.calculate_rounded,
+            title: 'Total Item',
+            description: 'Total variasi sparepart terdaftar',
+            value: controller.totalItems.value.toString(),
+            icon: Icons.inventory_2_rounded,
             color: AppColors.hondaRed,
             delay: 0,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard(
+          child: _buildTransactionCard(
             title: 'Barang Masuk',
-            description: 'Total qty barang masuk bulan ini',
-            value: controller.totalItems.value.toString(),
-            icon: Icons.inventory_2_rounded,
+            icon: Icons.add_business_rounded,
             color: AppColors.success,
             delay: 150,
+            frekuensi: controller.frekuensiBarangMasuk.value,
+            totalQty: controller.totalBarangMasuk.value,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard(
+          child: _buildTransactionCard(
             title: 'Barang Keluar',
-            description: 'Total qty barang keluar bulan ini',
-            value: '0', // Will need to be updated in controller when data is available
-            icon: Icons.trending_up_rounded,
+            icon: Icons.move_to_inbox_rounded,
             color: AppColors.warning,
             delay: 300,
+            frekuensi: controller.frekuensiBarangKeluar.value,
+            totalQty: controller.totalBarangKeluar.value,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTransactionCard({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required int delay,
+    required int frekuensi,
+    required int totalQty,
+  }) {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 600 + delay),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, animValue, child) {
+        return Opacity(
+          opacity: animValue,
+          child: Transform.translate(
+            offset: Offset(0, 30 * (1 - animValue)),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.trending_up_rounded,
+                    color: color,
+                    size: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              totalQty.toString(),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  Icons.receipt_long_rounded,
+                  size: 12,
+                  color: color,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '$frekuensi transaksi',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -418,7 +527,21 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
             Responsive.isMobile(context)
                 ? Column(
                     children: [
-                      _buildPrimaryActionButton(),
+                      _buildQuickActionButton(
+                        icon: Icons.inventory_2_rounded,
+                        title: 'Kelola Stock',
+                        subtitle: 'Kelola daftar sparepart',
+                        color: AppColors.hondaRed,
+                        onTap: () => Get.toNamed('/item-management'),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildQuickActionButton(
+                        icon: Icons.people_rounded,
+                        title: 'Kelola User',
+                        subtitle: 'Kelola akun staff dan admin',
+                        color: AppColors.primary,
+                        onTap: controller.navigateToUserManagement,
+                      ),
                       const SizedBox(height: 16),
                       _buildQuickActionButton(
                         icon: Icons.history_rounded,
@@ -432,7 +555,23 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 : Row(
                     children: [
                       Expanded(
-                        child: _buildPrimaryActionButton(),
+                        child: _buildQuickActionButton(
+                          icon: Icons.inventory_2_rounded,
+                          title: 'Kelola Stock',
+                          subtitle: 'Kelola daftar sparepart',
+                          color: AppColors.hondaRed,
+                          onTap: () => Get.toNamed('/item-management'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildQuickActionButton(
+                          icon: Icons.people_rounded,
+                          title: 'Kelola User',
+                          subtitle: 'Kelola akun staff dan admin',
+                          color: AppColors.primary,
+                          onTap: controller.navigateToUserManagement,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -446,82 +585,6 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                       ),
                     ],
                   ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPrimaryActionButton() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.hondaRed,
-            AppColors.hondaRedDark,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.hondaRed.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: InkWell(
-        onTap: () {
-          // Navigate to TOPSIS calculation page
-          // Get.toNamed('/topsis-calculation');
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.calculate_rounded,
-                color: Colors.white,
-                size: 28,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Mulai Perhitungan Baru',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Analisis stok menggunakan metode TOPSIS',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.arrow_forward_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
           ],
         ),
       ),
@@ -590,9 +653,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: const BoxDecoration(
-        color: AppColors.hondaRed,
-      ),
+      decoration: const BoxDecoration(color: AppColors.hondaRed),
       child: const Center(
         child: Text(
           '© Copyright AHASS AutoPart Monitor, 2026',

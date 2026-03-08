@@ -66,26 +66,19 @@ class BarangMasukPage extends GetView<BarangMasukController> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1400),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildHeaderCard(context),
-                        const SizedBox(height: 16),
-                        _buildTable(context),
-                      ],
-                    ),
-                  ),
-                ),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1400),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeaderCard(context),
+                  const SizedBox(height: 16),
+                  _buildTable(context),
+                ],
               ),
-              _buildFooter(),
-            ],
+            ),
           );
         }),
       ),
@@ -417,23 +410,6 @@ class BarangMasukPage extends GetView<BarangMasukController> {
     fontSize: 14,
     color: AppColors.textPrimary,
   );
-
-  Widget _buildFooter() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: AppColors.hondaRed,
-      child: const Center(
-        child: Text(
-          '© 2026 AHASS AutoPart Monitor. All rights reserved.',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _TableHeader extends StatelessWidget {

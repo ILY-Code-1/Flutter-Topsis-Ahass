@@ -102,6 +102,15 @@ class ItemManagementController extends GetxController {
     return DateFormat('dd/MM/yyyy HH:mm').format(date);
   }
 
+  // Get item by ID
+  ItemModel? getItemById(String idBarang) {
+    try {
+      return items.firstWhere((item) => item.idBarang == idBarang);
+    } catch (e) {
+      return null;
+    }
+  }
+
   // Save item (Create or Update)
   Future<void> saveItem() async {
     if (!formKey.currentState!.validate()) {

@@ -89,6 +89,13 @@ class StaffDashboardView extends GetView<StaffDashboardController> {
 
                     const SizedBox(height: 32),
 
+                    // Critical Items Alert
+                    if (controller.totalCriticalItems.value > 0)
+                      _buildCriticalItemsAlert(context),
+
+                    if (controller.totalCriticalItems.value > 0)
+                      const SizedBox(height: 24),
+
                     // Quick Actions
                     _buildQuickActions(context),
                   ],
@@ -193,22 +200,22 @@ class StaffDashboardView extends GetView<StaffDashboardController> {
           delay: 0,
         ),
         const SizedBox(height: 16),
-        _buildStatCard(
+        _buildTransactionCard(
           title: 'Barang Masuk',
-          description: 'Total qty barang masuk',
-          value: controller.totalBarangMasuk.value.toString(),
           icon: Icons.add_business_rounded,
           color: AppColors.success,
           delay: 150,
+          frekuensi: controller.frekuensiBarangMasuk.value,
+          totalQty: controller.totalBarangMasuk.value,
         ),
         const SizedBox(height: 16),
-        _buildStatCard(
+        _buildTransactionCard(
           title: 'Barang Keluar',
-          description: 'Total qty barang keluar',
-          value: controller.totalBarangKeluar.value.toString(),
           icon: Icons.move_to_inbox_rounded,
           color: AppColors.warning,
           delay: 300,
+          frekuensi: controller.frekuensiBarangKeluar.value,
+          totalQty: controller.totalBarangKeluar.value,
         ),
       ],
     );
@@ -229,27 +236,133 @@ class StaffDashboardView extends GetView<StaffDashboardController> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard(
+          child: _buildTransactionCard(
             title: 'Barang Masuk',
-            description: 'Total qty barang masuk',
-            value: controller.totalBarangMasuk.value.toString(),
             icon: Icons.add_business_rounded,
             color: AppColors.success,
             delay: 150,
+            frekuensi: controller.frekuensiBarangMasuk.value,
+            totalQty: controller.totalBarangMasuk.value,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildStatCard(
+          child: _buildTransactionCard(
             title: 'Barang Keluar',
-            description: 'Total qty barang keluar',
-            value: controller.totalBarangKeluar.value.toString(),
             icon: Icons.move_to_inbox_rounded,
             color: AppColors.warning,
             delay: 300,
+            frekuensi: controller.frekuensiBarangKeluar.value,
+            totalQty: controller.totalBarangKeluar.value,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTransactionCard({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required int delay,
+    required int frekuensi,
+    required int totalQty,
+  }) {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 600 + delay),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, animValue, child) {
+        return Opacity(
+          opacity: animValue,
+          child: Transform.translate(
+            offset: Offset(0, 30 * (1 - animValue)),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.trending_up_rounded,
+                    color: color,
+                    size: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              totalQty.toString(),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  Icons.receipt_long_rounded,
+                  size: 12,
+                  color: color,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '$frekuensi transaksi',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -349,6 +462,94 @@ class StaffDashboardView extends GetView<StaffDashboardController> {
     );
   }
 
+  Widget _buildCriticalItemsAlert(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 600),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 20 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFF6B6B), Color(0xFFEE5A24)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF6B6B).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.warning_rounded,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Stok Kritis!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${controller.totalCriticalItems.value} item stok kritis. Segera lakukan restock.',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'Lihat Detail',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildQuickActions(BuildContext context) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 800),
@@ -408,6 +609,14 @@ class StaffDashboardView extends GetView<StaffDashboardController> {
                 ? Column(
                     children: [
                       _buildQuickActionButton(
+                        icon: Icons.inventory_2_rounded,
+                        title: 'Kelola Stock',
+                        subtitle: 'Lihat daftar sparepart',
+                        color: AppColors.hondaRed,
+                        onTap: controller.navigateToKelolaStock,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildQuickActionButton(
                         icon: Icons.add_business_rounded,
                         title: 'Input Barang Masuk',
                         subtitle: 'Catat barang yang masuk',
@@ -426,6 +635,16 @@ class StaffDashboardView extends GetView<StaffDashboardController> {
                   )
                 : Row(
                     children: [
+                      Expanded(
+                        child: _buildQuickActionButton(
+                          icon: Icons.inventory_2_rounded,
+                          title: 'Kelola Stock',
+                          subtitle: 'Lihat daftar sparepart',
+                          color: AppColors.hondaRed,
+                          onTap: controller.navigateToKelolaStock,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: _buildQuickActionButton(
                           icon: Icons.add_business_rounded,

@@ -118,36 +118,28 @@ class StaffStockView extends GetView<StaffStockController> {
             );
           }
 
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 1400),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Header Card
-                        _buildHeaderCard(context),
-                        const SizedBox(height: 16),
-                        // Stock Table
-                        StockTableWidget(
-                          items: controller.displayItems,
-                          config: StockTableConfig(
-                            showActions: false,
-                            isEditable: false,
-                          ),
-                        ),
-                      ],
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 1400),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header Card
+                  _buildHeaderCard(context),
+                  const SizedBox(height: 16),
+                  // Stock Table
+                  StockTableWidget(
+                    items: controller.displayItems,
+                    config: StockTableConfig(
+                      showActions: false,
+                      isEditable: false,
                     ),
                   ),
-                ),
+                ],
               ),
-              // Footer
-              _buildFooter(),
-            ],
+            ),
           );
         }),
       ),
@@ -303,23 +295,6 @@ class StaffStockView extends GetView<StaffStockController> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: AppColors.hondaRed,
-      child: const Center(
-        child: Text(
-          '© 2026 AHASS AutoPart Monitor. All rights reserved.',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/item_model.dart';
 
@@ -13,6 +12,8 @@ class StockTableConfig {
   final bool showTransactions;
   final String Function(String idBarang)? getMasukCount;
   final String Function(String idBarang)? getKeluarCount;
+  final void Function(String idBarang)? onEdit;
+  final void Function(String namaBarang, String idBarang)? onDelete;
 
   const StockTableConfig({
     this.showActions = true,
@@ -21,6 +22,8 @@ class StockTableConfig {
     this.showTransactions = false,
     this.getMasukCount,
     this.getKeluarCount,
+    this.onEdit,
+    this.onDelete,
   });
 }
 
@@ -86,14 +89,14 @@ class StockTableWidget extends StatelessWidget {
               final item = entry.value;
 
               return DataRow(
-                color: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (index.isEven) {
-                      return const Color(0xFFE8F0F8).withOpacity(0.3);
-                    }
-                    return Colors.white;
+                color: WidgetStateProperty.resolveWith<Color>((
+                  Set<WidgetState> states,
+                ) {
+                  if (index.isEven) {
+                    return const Color(0xFFE8F0F8).withOpacity(0.3);
                   }
-                ),
+                  return Colors.white;
+                }),
                 cells: [
                   _buildDataCell(item.idBarang),
                   _buildDataCell(item.namaBarang),
@@ -103,9 +106,7 @@ class StockTableWidget extends StatelessWidget {
                   _buildDataCell(_formatTimestamp(item.lastUpdate)),
                   _buildStatusCell(item.statusStok),
                   if (config.showActions)
-                    _buildActionCell(item.namaBarang, item.idBarang)
-                  else
-                    _buildReadOnlyIndicator(),
+                    _buildActionCell(item.namaBarang, item.idBarang),
                 ],
               );
             }).toList(),
@@ -136,7 +137,10 @@ class StockTableWidget extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.white, const Color(0xFFE8F0F8).withOpacity(0.3)],
+                colors: [
+                  Colors.white,
+                  const Color(0xFFE8F0F8).withOpacity(0.3),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -331,7 +335,11 @@ class StockTableWidget extends StatelessWidget {
               icon: const Icon(Icons.edit_outlined),
               color: Colors.blue.shade700,
               tooltip: 'Edit',
-              onPressed: () => _editItem(idBarang),
+              onPressed: () {
+                if (config.onEdit != null) {
+                  config.onEdit!(idBarang);
+                }
+              },
             ),
           ),
           const SizedBox(width: 8),
@@ -344,22 +352,14 @@ class StockTableWidget extends StatelessWidget {
               icon: const Icon(Icons.delete_outline),
               color: Colors.red.shade700,
               tooltip: 'Hapus',
-              onPressed: () => _deleteItem(namaBarang, idBarang),
+              onPressed: () {
+                if (config.onDelete != null) {
+                  config.onDelete!(namaBarang, idBarang);
+                }
+              },
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  DataCell _buildReadOnlyIndicator() {
-    return const DataCell(
-      Center(
-        child: Icon(
-          Icons.block_outlined,
-          color: Colors.grey,
-          size: 20,
-        ),
       ),
     );
   }
@@ -395,7 +395,11 @@ class StockTableWidget extends StatelessWidget {
             icon: const Icon(Icons.edit_outlined),
             color: Colors.blue.shade700,
             tooltip: 'Edit',
-            onPressed: () => _editItem(idBarang),
+            onPressed: () {
+              if (config.onEdit != null) {
+                config.onEdit!(idBarang);
+              }
+            },
           ),
         ),
         const SizedBox(width: 8),
@@ -408,7 +412,11 @@ class StockTableWidget extends StatelessWidget {
             icon: const Icon(Icons.delete_outline),
             color: Colors.red.shade700,
             tooltip: 'Hapus',
-            onPressed: () => _deleteItem(namaBarang, idBarang),
+            onPressed: () {
+              if (config.onDelete != null) {
+                config.onDelete!(namaBarang, idBarang);
+              }
+            },
           ),
         ),
       ],
@@ -425,11 +433,7 @@ class StockTableWidget extends StatelessWidget {
       child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.block_outlined,
-            size: 16,
-            color: Colors.grey,
-          ),
+          Icon(Icons.block_outlined, size: 16, color: Colors.grey),
           SizedBox(width: 4),
           Text(
             'Read Only',
@@ -480,28 +484,6 @@ class StockTableWidget extends StatelessWidget {
       default:
         return Colors.grey;
     }
-  }
-
-  void _editItem(String idBarang) {
-    if (config.onRefresh != null) return;
-    // This will be handled by the parent page/controller
-    // For now, just show a snackbar
-    Get.snackbar(
-      'Info',
-      'Edit functionality will be implemented by parent',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  void _deleteItem(String namaBarang, String idBarang) {
-    if (config.onRefresh != null) return;
-    // This will be handled by the parent page/controller
-    // For now, just show a snackbar
-    Get.snackbar(
-      'Info',
-      'Delete functionality will be implemented by parent',
-      snackPosition: SnackPosition.BOTTOM,
-    );
   }
 
   String _formatTimestamp(Timestamp timestamp) {

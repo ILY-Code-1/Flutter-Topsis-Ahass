@@ -9,6 +9,10 @@ class AdminDashboardController extends GetxController {
   final RxInt totalStaffUsers = 0.obs;
   final RxInt totalAdminUsers = 0.obs;
   final RxInt totalItems = 0.obs;
+  final RxInt totalBarangMasuk = 0.obs;
+  final RxInt frekuensiBarangMasuk = 0.obs;
+  final RxInt totalBarangKeluar = 0.obs;
+  final RxInt frekuensiBarangKeluar = 0.obs;
   final RxBool isLoading = true.obs;
 
   @override
@@ -50,6 +54,24 @@ class AdminDashboardController extends GetxController {
       // Fetch total items
       final itemsSnapshot = await _firestore.collection('items').get();
       totalItems.value = itemsSnapshot.docs.length;
+
+      // Fetch barang masuk data (frekuensi dan total quantity)
+      final barangMasukSnapshot = await _firestore.collection('barang_masuk').get();
+      frekuensiBarangMasuk.value = barangMasukSnapshot.docs.length;
+      int masukCount = 0;
+      for (var doc in barangMasukSnapshot.docs) {
+        masukCount += (doc.data()['jumlah'] as int? ?? 0);
+      }
+      totalBarangMasuk.value = masukCount;
+
+      // Fetch barang keluar data (frekuensi dan total quantity)
+      final barangKeluarSnapshot = await _firestore.collection('barang_keluar').get();
+      frekuensiBarangKeluar.value = barangKeluarSnapshot.docs.length;
+      int keluarCount = 0;
+      for (var doc in barangKeluarSnapshot.docs) {
+        keluarCount += (doc.data()['jumlah'] as int? ?? 0);
+      }
+      totalBarangKeluar.value = keluarCount;
 
       isLoading.value = false;
     } catch (e) {
