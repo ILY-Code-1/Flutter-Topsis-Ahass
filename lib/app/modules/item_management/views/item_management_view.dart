@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../themes/themes.dart';
@@ -6,12 +7,14 @@ import '../../../widgets/stock_table_widget.dart';
 import '../../../models/item_model.dart';
 import '../controllers/item_management_controller.dart';
 import '../../admin_dashboard/widgets/admin_drawer.dart';
+import '../../topsis/controllers/topsis_controller.dart';
 
 class ItemManagementView extends GetView<ItemManagementController> {
   const ItemManagementView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TopsisController topsisController = Get.find<TopsisController>();
     return Scaffold(
       drawer: const AdminDrawer(currentRoute: '/item-management'),
       appBar: AppBar(
@@ -290,15 +293,28 @@ class ItemManagementView extends GetView<ItemManagementController> {
                               const SizedBox(width: 12),
                               // Mulai Analisis Button
                               Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Navigate to TOPSIS analysis
-                                    // Get.toNamed('/topsis');
-                                  },
-                                  icon: const Icon(Icons.analytics, size: 20),
-                                  label: const Text(
-                                    'Mulai Analisis',
-                                    style: TextStyle(
+                                child: Obx(() => ElevatedButton.icon(
+                                  onPressed: topsisController.isLoading.value
+                                      ? null
+                                      : () async {
+                                          await topsisController.runAnalysis();
+                                          controller.fetchItems();
+                                        },
+                                  icon: topsisController.isLoading.value
+                                      ? Container(
+                                          width: 20,
+                                          height: 20,
+                                          child: const CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(Icons.analytics, size: 20),
+                                  label: Text(
+                                    topsisController.isLoading.value
+                                        ? 'Analyzing...'
+                                        : 'Analyze Stock Priority',
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -310,7 +326,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                       vertical: 12,
                                     ),
                                   ),
-                                ),
+                                )),
                               ),
                             ],
                           ),

@@ -43,8 +43,8 @@ class HomeController extends GetxController {
     Get.toNamed(Routes.history);
   }
 
-  void navigateToUploadExcel() {
-    Get.toNamed(Routes.uploadExcel);
+  void navigateToTopsis() {
+    Get.toNamed(Routes.topsis);
   }
 
   void scrollToSection(GlobalKey key) {

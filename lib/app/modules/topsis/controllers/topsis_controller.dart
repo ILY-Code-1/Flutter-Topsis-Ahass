@@ -1,690 +1,261 @@
 import 'dart:math';
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get_storage/get_storage.dart';
-
-class ItemData {
-  String id;
-  String namaBarang;
-  double stokAwal;
-  double stokAkhir;
-  double jumlahMasuk;
-  double jumlahKeluar;
-  double rataRataPemakaian;
-  double frekuensiRestock;
-  double dayToStockOut;
-  double fluktuasiPemakaian;
-  int? harga;
-
-  ItemData({
-    required this.id,
-    required this.namaBarang,
-    required this.stokAwal,
-    required this.stokAkhir,
-    required this.jumlahMasuk,
-    required this.jumlahKeluar,
-    required this.rataRataPemakaian,
-    required this.frekuensiRestock,
-    required this.dayToStockOut,
-    required this.fluktuasiPemakaian,
-    this.harga,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'namaBarang': namaBarang,
-      'stokAwal': stokAwal,
-      'stokAkhir': stokAkhir,
-      'jumlahMasuk': jumlahMasuk,
-      'jumlahKeluar': jumlahKeluar,
-      'rataRataPemakaian': rataRataPemakaian,
-      'frekuensiRestock': frekuensiRestock,
-      'dayToStockOut': dayToStockOut,
-      'fluktuasiPemakaian': fluktuasiPemakaian,
-      'harga': harga,
-    };
-  }
-
-  factory ItemData.fromJson(Map<String, dynamic> json) {
-    return ItemData(
-      id: json['id'] as String,
-      namaBarang: json['namaBarang'] as String,
-      stokAwal: (json['stokAwal'] as num).toDouble(),
-      stokAkhir: (json['stokAkhir'] as num).toDouble(),
-      jumlahMasuk: (json['jumlahMasuk'] as num).toDouble(),
-      jumlahKeluar: (json['jumlahKeluar'] as num).toDouble(),
-      rataRataPemakaian: (json['rataRataPemakaian'] as num).toDouble(),
-      frekuensiRestock: (json['frekuensiRestock'] as num).toDouble(),
-      dayToStockOut: (json['dayToStockOut'] as num).toDouble(),
-      fluktuasiPemakaian: (json['fluktuasiPemakaian'] as num).toDouble(),
-      harga: json['harga'] as int?,
-    );
-  }
-
-  Map<String, String> toDisplayMap() {
-    return {
-      'Stok Awal': stokAwal.toStringAsFixed(0),
-      'Stok Akhir': stokAkhir.toStringAsFixed(0),
-      'Jml Masuk': jumlahMasuk.toStringAsFixed(0),
-      'Jml Keluar': jumlahKeluar.toStringAsFixed(0),
-      'Rata² Pemakaian': rataRataPemakaian.toStringAsFixed(2),
-      'Frek. Restock': frekuensiRestock.toStringAsFixed(0),
-      'Day To Stock Out': dayToStockOut.toStringAsFixed(1),
-      'Fluktuasi': fluktuasiPemakaian.toStringAsFixed(2),
-      'Harga': harga != null ? 'Rp ${harga.toString()}' : '-',
-    };
-  }
-}
+import 'package:get/get.dart';
+import '../../../models/analisis_topsis_model.dart';
+import '../../../models/item_model.dart';
+import '../../../models/stock_snapshot_model.dart';
+import '../../../models/barang_keluar_model.dart';
+import '../../../services/item_service.dart';
+import '../../../services/topsis_service.dart';
 
 class TopsisController extends GetxController {
-  static const String _storageKey = 'kmeans_items';
-  final _storage = GetStorage();
-
-  final items = <ItemData>[].obs;
-  final isEditing = false.obs;
-  final editingId = ''.obs;
-
-  // Form Controllers
-  final namaBarangController = TextEditingController();
-  final stokAwalController = TextEditingController();
-  final stokAkhirController = TextEditingController();
-  final jumlahMasukController = TextEditingController();
-  final jumlahKeluarController = TextEditingController();
-  final rataRataPemakaianController = TextEditingController();
-  final frekuensiRestockController = TextEditingController();
-  final dayToStockOutController = TextEditingController();
-  final fluktuasiPemakaianController = TextEditingController();
-
-  final formKey = GlobalKey<FormState>();
-
-  @override
-  void onInit() {
-    super.onInit();
-    _loadItemsFromStorage();
-  }
-
-  @override
-  void onClose() {
-    namaBarangController.dispose();
-    stokAwalController.dispose();
-    stokAkhirController.dispose();
-    jumlahMasukController.dispose();
-    jumlahKeluarController.dispose();
-    rataRataPemakaianController.dispose();
-    frekuensiRestockController.dispose();
-    dayToStockOutController.dispose();
-    fluktuasiPemakaianController.dispose();
-    super.onClose();
-  }
-
-  void _loadItemsFromStorage() {
-    final storedData = _storage.read<String>(_storageKey);
-    if (storedData != null) {
-      final List<dynamic> jsonList = jsonDecode(storedData);
-      items.value = jsonList.map((json) => ItemData.fromJson(json)).toList();
-    }
-  }
-
-  void _saveItemsToStorage() {
-    final jsonList = items.map((item) => item.toJson()).toList();
-    _storage.write(_storageKey, jsonEncode(jsonList));
-  }
-
-  void clearForm() {
-    namaBarangController.clear();
-    stokAwalController.clear();
-    stokAkhirController.clear();
-    jumlahMasukController.clear();
-    jumlahKeluarController.clear();
-    rataRataPemakaianController.clear();
-    frekuensiRestockController.clear();
-    dayToStockOutController.clear();
-    fluktuasiPemakaianController.clear();
-    isEditing.value = false;
-    editingId.value = '';
-  }
-
-  void addOrUpdateItem() {
-    if (!formKey.currentState!.validate()) return;
-
-    final item = ItemData(
-      id: isEditing.value
-          ? editingId.value
-          : DateTime.now().millisecondsSinceEpoch.toString(),
-      namaBarang: namaBarangController.text,
-      stokAwal: double.tryParse(stokAwalController.text) ?? 0,
-      stokAkhir: double.tryParse(stokAkhirController.text) ?? 0,
-      jumlahMasuk: double.tryParse(jumlahMasukController.text) ?? 0,
-      jumlahKeluar: double.tryParse(jumlahKeluarController.text) ?? 0,
-      rataRataPemakaian: double.tryParse(rataRataPemakaianController.text) ?? 0,
-      frekuensiRestock: double.tryParse(frekuensiRestockController.text) ?? 0,
-      dayToStockOut: double.tryParse(dayToStockOutController.text) ?? 0,
-      fluktuasiPemakaian:
-          double.tryParse(fluktuasiPemakaianController.text) ?? 0,
-    );
-
-    if (isEditing.value) {
-      final index = items.indexWhere((e) => e.id == editingId.value);
-      if (index != -1) {
-        items[index] = item;
-      }
-      Get.snackbar(
-        'Berhasil',
-        'Data berhasil diperbarui',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green.withValues(alpha: 0.8),
-        colorText: Colors.white,
-      );
-    } else {
-      items.add(item);
-      Get.snackbar(
-        'Berhasil',
-        'Data berhasil ditambahkan',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green.withValues(alpha: 0.8),
-        colorText: Colors.white,
-      );
-    }
-
-    _saveItemsToStorage();
-    clearForm();
-  }
-
-  void editItem(ItemData item) {
-    isEditing.value = true;
-    editingId.value = item.id;
-
-    namaBarangController.text = item.namaBarang;
-    stokAwalController.text = item.stokAwal.toStringAsFixed(0);
-    stokAkhirController.text = item.stokAkhir.toStringAsFixed(0);
-    jumlahMasukController.text = item.jumlahMasuk.toStringAsFixed(0);
-    jumlahKeluarController.text = item.jumlahKeluar.toStringAsFixed(0);
-    rataRataPemakaianController.text = item.rataRataPemakaian.toStringAsFixed(
-      2,
-    );
-    frekuensiRestockController.text = item.frekuensiRestock.toStringAsFixed(0);
-    dayToStockOutController.text = item.dayToStockOut.toStringAsFixed(1);
-    fluktuasiPemakaianController.text = item.fluktuasiPemakaian.toStringAsFixed(
-      2,
-    );
-  }
-
-  void deleteItem(String id) {
-    items.removeWhere((e) => e.id == id);
-    _saveItemsToStorage();
-    Get.snackbar(
-      'Berhasil',
-      'Data berhasil dihapus',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red.withValues(alpha: 0.8),
-      colorText: Colors.white,
-    );
-  }
-
-  final isProcessing = false.obs;
+  final ItemService _itemService = Get.find<ItemService>();
+  final TopsisService _topsisService = Get.find<TopsisService>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String? lastResultId;
 
-  Future<void> navigateToForm() async {
-    if (items.length < 3) {
-      Get.snackbar(
-        'Peringatan',
-        'Tambahkan minimal 3 item data terlebih dahulu',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.orange.withValues(alpha: 0.8),
-        colorText: Colors.white,
-      );
-      return;
-    }
+  final isLoading = false.obs;
 
-    isProcessing.value = true;
-
+  Future<void> runAnalysis() async {
     try {
-      // K-Means Clustering
-      final kmeansResult = _performKMeansClustering();
+      isLoading.value = true;
 
-      // Save to Firebase
-      final resultId = await _saveToFirebase(kmeansResult);
-      lastResultId = resultId;
+      final now = DateTime.now();
+      final month = now.month;
+      final year = now.year;
 
-      Get.snackbar(
-        'Berhasil',
-        'Perhitungan K-Means selesai dan data berhasil disimpan',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green.withValues(alpha: 0.8),
-        colorText: Colors.white,
+      // Step 1: Always fetch the latest items to ensure synchronized stock
+      final currentItems = await _itemService.getItems();
+      if (currentItems.isEmpty) {
+        throw Exception('No items found to analyze');
+      }
+
+      // Step 1.1: Create or update snapshot for the current month
+      // This ensures the snapshot also stays relatively updated with the last analysis
+      await _topsisService.createSnapshot(currentItems, month, year);
+
+      // Step 1.2: Fetch current month's transactions to sync total_keluar and frekuensi
+      final firstDayOfMonth = DateTime(year, month, 1);
+      final lastDayOfMonth = DateTime(year, month + 1, 0, 23, 59, 59);
+
+      final barangKeluarSnapshot = await _firestore
+          .collection('barang_keluar')
+          .where(
+            'tanggal',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(firstDayOfMonth),
+          )
+          .where(
+            'tanggal',
+            isLessThanOrEqualTo: Timestamp.fromDate(lastDayOfMonth),
+          )
+          .get();
+
+      final List<BarangKeluarModel> transactions = barangKeluarSnapshot.docs
+          .map((doc) => BarangKeluarModel.fromMap(doc.data()))
+          .toList();
+
+      // Create a map for quick lookup
+      final Map<String, List<int>> itemStats = {};
+      for (var tx in transactions) {
+        if (!itemStats.containsKey(tx.idBarang)) {
+          itemStats[tx.idBarang] = [];
+        }
+        itemStats[tx.idBarang]!.add(tx.jumlah);
+      }
+
+      // Step 2: Build decision matrix using real-time items (4 criteria: stok_sekarang, stok_minimum, total_keluar, frekuensi_keluar)
+      // Criteria:
+      // 0: stok_sekarang (cost)
+      // 1: stok_minimum (benefit)
+      // 2: total_keluar (benefit)
+      // 3: frekuensi_keluar (benefit)
+      final matrix = currentItems.map((item) {
+        final stats = itemStats[item.idBarang] ?? [];
+        final totalKeluar = stats.fold<int>(0, (sum, qty) => sum + qty);
+        final frekuensiKeluar = stats.length;
+
+        return [
+          item.stokSekarang.toDouble(),
+          item.stokMinimum.toDouble(),
+          totalKeluar.toDouble(),
+          frekuensiKeluar.toDouble(),
+        ];
+      }).toList();
+
+      // Step 3: Normalize matrix
+      final normalizedMatrix = _normalizeMatrix(matrix);
+
+      // Step 4: Apply weights (adjusting to 4 criteria)
+      // stok_sekarang: 0.25, stok_minimum: 0.2, total_keluar: 0.3, frekuensi_keluar: 0.25
+      final weights = [0.25, 0.2, 0.3, 0.25];
+      final weightedMatrix = _applyWeights(normalizedMatrix, weights);
+
+      // Step 5: Determine ideal solutions
+      final idealSolutions = _getIdealSolutions(weightedMatrix);
+      final positiveIdeal = idealSolutions[0];
+      final negativeIdeal = idealSolutions[1];
+
+      // Step 6 & 7: Calculate distances
+      final distances = _calculateDistances(
+        weightedMatrix,
+        positiveIdeal,
+        negativeIdeal,
       );
 
-      // Langsung ke success page tanpa form
-      Get.toNamed('/success', arguments: {'resultId': resultId});
+      // Step 8: Calculate preference values
+      final preferenceValues = _calculatePreferenceValues(distances);
+
+      // Step 9 & 10: Rank items with synced data
+      final rankedItems = _rankItems(currentItems, preferenceValues, itemStats);
+
+      // Save analysis
+      final analysis = AnalisisTopsisModel(
+        periodeBulan: month,
+        periodeTahun: year,
+        createdAt: Timestamp.now(),
+        totalItems: currentItems.length,
+        criteria: [
+          {'name': 'stok_sekarang', 'type': 'cost', 'weight': 0.25},
+          {'name': 'stok_minimum', 'type': 'benefit', 'weight': 0.2},
+          {'name': 'total_keluar', 'type': 'benefit', 'weight': 0.3},
+          {'name': 'frekuensi_keluar', 'type': 'benefit', 'weight': 0.25},
+        ],
+        results: rankedItems,
+      );
+
+      await _topsisService.saveAnalysis(analysis);
+
+      Get.snackbar('Success', 'TOPSIS analysis completed successfully');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Terjadi kesalahan: $e',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.withValues(alpha: 0.8),
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Failed to run analysis: $e');
     } finally {
-      isProcessing.value = false;
+      isLoading.value = false;
     }
   }
 
-  Map<String, dynamic> _performKMeansClustering() {
-    const int k = 3;
-    const int maxIterations = 100;
+  List<List<double>> _normalizeMatrix(List<List<double>> matrix) {
+    if (matrix.isEmpty) return [];
+    final int colCount = matrix[0].length;
+    final List<double> dividers = List.filled(colCount, 0.0);
 
-    // Extract features for clustering (6 features)
-    List<List<double>> dataPoints = items
+    for (int j = 0; j < colCount; j++) {
+      double sum = 0;
+      for (int i = 0; i < matrix.length; i++) {
+        sum += pow(matrix[i][j], 2);
+      }
+      dividers[j] = sqrt(sum);
+      // Avoid division by zero
+      if (dividers[j] == 0) dividers[j] = 1.0;
+    }
+
+    return matrix
         .map(
-          (item) => [
-            item.jumlahMasuk,
-            item.jumlahKeluar,
-            item.rataRataPemakaian,
-            item.frekuensiRestock,
-            item.dayToStockOut,
-            item.fluktuasiPemakaian,
-          ],
+          (row) => row
+              .asMap()
+              .map((j, value) => MapEntry(j, value / dividers[j]))
+              .values
+              .toList(),
         )
         .toList();
-
-    // Normalize data
-    final normalizedData = _normalizeData(dataPoints);
-
-    // Initialize centroids using K-Means++ method
-    List<List<double>> centroids = _initializeCentroidsKMeansPlusPlus(
-      normalizedData,
-      k,
-    );
-
-    List<int> assignments = List.filled(items.length, 0);
-    List<List<double>> previousCentroids = [];
-
-    // Store iteration history for report
-    List<Map<String, dynamic>> iterationHistory = [];
-
-    for (int iteration = 0; iteration < maxIterations; iteration++) {
-      // Store distance calculations for this iteration
-      List<Map<String, dynamic>> distanceCalculations = [];
-
-      // Assign points to nearest centroid
-      for (int i = 0; i < normalizedData.length; i++) {
-        double minDistance = double.infinity;
-        int nearestCentroid = 0;
-        List<double> distances = [];
-
-        for (int j = 0; j < k; j++) {
-          double distance = _euclideanDistance(normalizedData[i], centroids[j]);
-          distances.add(distance);
-          if (distance < minDistance) {
-            minDistance = distance;
-            nearestCentroid = j;
-          }
-        }
-
-        assignments[i] = nearestCentroid;
-        distanceCalculations.add({
-          'itemName': items[i].namaBarang,
-          'itemIndex': i,
-          'distances': distances,
-          'assignedCluster': nearestCentroid + 1,
-        });
-      }
-
-      // Store previous centroids for convergence check
-      previousCentroids = centroids.map((c) => List<double>.from(c)).toList();
-
-      // Update centroids
-      centroids = _updateCentroids(normalizedData, assignments, k);
-
-      // Record iteration (convert nested arrays to maps for Firebase compatibility)
-      iterationHistory.add({
-        'iteration': iteration + 1,
-        'centroids': _convertCentroidsToMap(centroids),
-        'assignments': List<int>.from(assignments),
-        'distanceCalculations': distanceCalculations
-            .map(
-              (dc) => {
-                ...dc,
-                'distances': _convertListToMap(dc['distances'] as List<double>),
-              },
-            )
-            .toList(),
-      });
-
-      // Check convergence
-      if (_hasConverged(previousCentroids, centroids)) {
-        break;
-      }
-    }
-
-    // Determine cluster characteristics and sort
-    final clusterAnalysis = _analyzeAndSortClusters(assignments, k);
-
-    // Generate recommendations
-    final recommendations = _generateRecommendations(
-      assignments,
-      clusterAnalysis,
-    );
-
-    // Build detailed result
-    return {
-      'timestamp': DateTime.now().toIso8601String(),
-      'totalItems': items.length,
-      'k': k,
-      'totalIterations': iterationHistory.length,
-      'iterationHistory': iterationHistory,
-      'finalCentroids': _convertCentroidsToMap(centroids),
-      'clusterAnalysis': clusterAnalysis,
-      'itemResults': _buildItemResults(assignments, clusterAnalysis),
-      'recommendations': recommendations,
-      'rawData': items
-          .map(
-            (item) => {
-              'id': item.id,
-              'namaBarang': item.namaBarang,
-              'stokAwal': item.stokAwal,
-              'stokAkhir': item.stokAkhir,
-              'jumlahMasuk': item.jumlahMasuk,
-              'jumlahKeluar': item.jumlahKeluar,
-              'rataRataPemakaian': item.rataRataPemakaian,
-              'frekuensiRestock': item.frekuensiRestock,
-              'dayToStockOut': item.dayToStockOut,
-              'fluktuasiPemakaian': item.fluktuasiPemakaian,
-              'harga': item.harga,
-            },
-          )
-          .toList(),
-    };
   }
 
-  // Helper methods to convert nested arrays to maps for Firebase compatibility
-  Map<String, Map<String, double>> _convertCentroidsToMap(
-    List<List<double>> centroids,
+  List<List<double>> _applyWeights(
+    List<List<double>> matrix,
+    List<double> weights,
   ) {
-    Map<String, Map<String, double>> result = {};
-    for (int i = 0; i < centroids.length; i++) {
-      result['c$i'] = _convertListToMap(centroids[i]);
-    }
-    return result;
+    return matrix
+        .map(
+          (row) => row
+              .asMap()
+              .map((j, value) => MapEntry(j, value * weights[j]))
+              .values
+              .toList(),
+        )
+        .toList();
   }
 
-  Map<String, double> _convertListToMap(List<double> list) {
-    Map<String, double> result = {};
-    for (int i = 0; i < list.length; i++) {
-      result['v$i'] = list[i];
-    }
-    return result;
-  }
+  List<List<double>> _getIdealSolutions(List<List<double>> matrix) {
+    if (matrix.isEmpty) return [[], []];
+    final int colCount = matrix[0].length;
+    final positiveIdeal = List<double>.filled(colCount, 0.0);
+    final negativeIdeal = List<double>.filled(colCount, 0.0);
 
-  List<List<double>> _normalizeData(List<List<double>> data) {
-    if (data.isEmpty) return data;
-
-    int numFeatures = data[0].length;
-    List<double> minValues = List.filled(numFeatures, double.infinity);
-    List<double> maxValues = List.filled(numFeatures, double.negativeInfinity);
-
-    // Find min and max for each feature
-    for (var point in data) {
-      for (int i = 0; i < numFeatures; i++) {
-        if (point[i] < minValues[i]) minValues[i] = point[i];
-        if (point[i] > maxValues[i]) maxValues[i] = point[i];
+    for (int j = 0; j < colCount; j++) {
+      List<double> column = matrix.map((row) => row[j]).toList();
+      if (j == 0) {
+        // Cost criteria (stok_sekarang)
+        positiveIdeal[j] = column.reduce(min);
+        negativeIdeal[j] = column.reduce(max);
+      } else {
+        // Benefit criteria (stok_minimum, total_keluar, frekuensi_keluar)
+        positiveIdeal[j] = column.reduce(max);
+        negativeIdeal[j] = column.reduce(min);
       }
     }
+    return [positiveIdeal, negativeIdeal];
+  }
 
-    // Normalize
-    return data.map((point) {
-      return List.generate(numFeatures, (i) {
-        double range = maxValues[i] - minValues[i];
-        if (range == 0) return 0.0;
-        return (point[i] - minValues[i]) / range;
-      });
+  List<List<double>> _calculateDistances(
+    List<List<double>> matrix,
+    List<double> positiveIdeal,
+    List<double> negativeIdeal,
+  ) {
+    return matrix.map((row) {
+      double dPlus = 0;
+      double dMinus = 0;
+      for (int j = 0; j < row.length; j++) {
+        dPlus += pow(row[j] - positiveIdeal[j], 2);
+        dMinus += pow(row[j] - negativeIdeal[j], 2);
+      }
+      return [sqrt(dPlus), sqrt(dMinus)];
     }).toList();
   }
 
-  List<List<double>> _initializeCentroidsKMeansPlusPlus(
-    List<List<double>> data,
-    int k,
+  List<double> _calculatePreferenceValues(List<List<double>> distances) {
+    return distances.map((d) {
+      final dPlus = d[0];
+      final dMinus = d[1];
+      if ((dPlus + dMinus) == 0) return 0.0;
+      return dMinus / (dPlus + dMinus);
+    }).toList();
+  }
+
+  List<Map<String, dynamic>> _rankItems(
+    List<ItemModel> items,
+    List<double> preferenceValues,
+    Map<String, List<int>> itemStats,
   ) {
-    final random = Random();
-    List<List<double>> centroids = [];
+    final rankedItems = items
+        .asMap()
+        .map((i, item) {
+          final stats = itemStats[item.idBarang] ?? [];
+          final totalKeluar = stats.fold<int>(0, (sum, qty) => sum + qty);
+          final frekuensiKeluar = stats.length;
 
-    // Choose first centroid randomly
-    centroids.add(List<double>.from(data[random.nextInt(data.length)]));
+          return MapEntry(i, {
+            'id_barang': item.idBarang,
+            'nama_barang': item.namaBarang,
+            'nilai_preferensi': preferenceValues[i],
+            'stok_sekarang': item.stokSekarang,
+            'stok_minimum': item.stokMinimum,
+            'lead_time': item.leadTime,
+            'total_keluar': totalKeluar,
+            'frekuensi_keluar': frekuensiKeluar,
+            'status_stok': item.statusStok,
+          });
+        })
+        .values
+        .toList();
 
-    // Choose remaining centroids
-    for (int i = 1; i < k; i++) {
-      List<double> distances = [];
-      double totalDistance = 0;
-
-      for (var point in data) {
-        double minDist = double.infinity;
-        for (var centroid in centroids) {
-          double dist = _euclideanDistance(point, centroid);
-          if (dist < minDist) minDist = dist;
-        }
-        distances.add(minDist * minDist);
-        totalDistance += minDist * minDist;
-      }
-
-      // Choose next centroid with probability proportional to distance squared
-      double threshold = random.nextDouble() * totalDistance;
-      double cumulative = 0;
-      for (int j = 0; j < data.length; j++) {
-        cumulative += distances[j];
-        if (cumulative >= threshold) {
-          centroids.add(List<double>.from(data[j]));
-          break;
-        }
-      }
-    }
-
-    return centroids;
-  }
-
-  double _euclideanDistance(List<double> a, List<double> b) {
-    double sum = 0;
-    for (int i = 0; i < a.length; i++) {
-      sum += pow(a[i] - b[i], 2);
-    }
-    return sqrt(sum);
-  }
-
-  List<List<double>> _updateCentroids(
-    List<List<double>> data,
-    List<int> assignments,
-    int k,
-  ) {
-    int numFeatures = data[0].length;
-    List<List<double>> newCentroids = List.generate(
-      k,
-      (_) => List.filled(numFeatures, 0.0),
-    );
-    List<int> counts = List.filled(k, 0);
-
-    for (int i = 0; i < data.length; i++) {
-      int cluster = assignments[i];
-      counts[cluster]++;
-      for (int j = 0; j < numFeatures; j++) {
-        newCentroids[cluster][j] += data[i][j];
-      }
-    }
-
-    for (int i = 0; i < k; i++) {
-      if (counts[i] > 0) {
-        for (int j = 0; j < numFeatures; j++) {
-          newCentroids[i][j] /= counts[i];
-        }
-      }
-    }
-
-    return newCentroids;
-  }
-
-  bool _hasConverged(
-    List<List<double>> oldCentroids,
-    List<List<double>> newCentroids,
-  ) {
-    const double threshold = 0.0001;
-    for (int i = 0; i < oldCentroids.length; i++) {
-      if (_euclideanDistance(oldCentroids[i], newCentroids[i]) > threshold) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  Map<String, dynamic> _analyzeAndSortClusters(List<int> assignments, int k) {
-    // Calculate average consumption (jumlahKeluar) for each cluster
-    List<double> avgConsumption = List.filled(k, 0);
-    List<int> counts = List.filled(k, 0);
-
-    for (int i = 0; i < assignments.length; i++) {
-      int cluster = assignments[i];
-      avgConsumption[cluster] += items[i].jumlahKeluar;
-      counts[cluster]++;
-    }
-
-    for (int i = 0; i < k; i++) {
-      if (counts[i] > 0) {
-        avgConsumption[i] /= counts[i];
-      }
-    }
-
-    // Sort clusters by average consumption (descending)
-    List<int> sortedIndices = List.generate(k, (i) => i);
-    sortedIndices.sort(
-      (a, b) => avgConsumption[b].compareTo(avgConsumption[a]),
+    rankedItems.sort(
+      (a, b) => (b['nilai_preferensi'] as double).compareTo(
+        a['nilai_preferensi'] as double,
+      ),
     );
 
-    // Create mapping: original cluster -> sorted cluster (1-based)
-    // Use String keys for Firebase compatibility
-    Map<String, int> clusterMapping = {};
-    for (int i = 0; i < k; i++) {
-      clusterMapping[sortedIndices[i].toString()] = i + 1;
-    }
-
-    // Cluster labels
-    List<String> clusterLabels = [
-      'Barang Cepat Habis',
-      'Barang Kebutuhan Normal',
-      'Barang Jarang Terpakai',
-    ];
-
-    return {
-      'clusterMapping': clusterMapping,
-      'avgConsumption': avgConsumption,
-      'counts': counts,
-      'clusterLabels': clusterLabels,
-      'sortedIndices': sortedIndices,
-    };
-  }
-
-  List<Map<String, dynamic>> _buildItemResults(
-    List<int> assignments,
-    Map<String, dynamic> clusterAnalysis,
-  ) {
-    Map<String, int> clusterMapping = Map<String, int>.from(
-      clusterAnalysis['clusterMapping'],
-    );
-    List<String> clusterLabels = List<String>.from(
-      clusterAnalysis['clusterLabels'],
-    );
-
-    return List.generate(items.length, (i) {
-      int originalCluster = assignments[i];
-      int sortedCluster = clusterMapping[originalCluster.toString()]!;
-
-      return {
-        'itemId': items[i].id,
-        'namaBarang': items[i].namaBarang,
-        'originalCluster': originalCluster,
-        'cluster': sortedCluster,
-        'clusterLabel': clusterLabels[sortedCluster - 1],
-        'jumlahMasuk': items[i].jumlahMasuk,
-        'jumlahKeluar': items[i].jumlahKeluar,
-        'rataRataPemakaian': items[i].rataRataPemakaian,
-        'frekuensiRestock': items[i].frekuensiRestock,
-        'dayToStockOut': items[i].dayToStockOut,
-        'fluktuasiPemakaian': items[i].fluktuasiPemakaian,
-        'stokAwal': items[i].stokAwal,
-        'stokAkhir': items[i].stokAkhir,
-      };
-    });
-  }
-
-  List<Map<String, dynamic>> _generateRecommendations(
-    List<int> assignments,
-    Map<String, dynamic> clusterAnalysis,
-  ) {
-    Map<String, int> clusterMapping = Map<String, int>.from(
-      clusterAnalysis['clusterMapping'],
-    );
-    List<Map<String, dynamic>> recommendations = [];
-
-    for (int i = 0; i < items.length; i++) {
-      int sortedCluster = clusterMapping[assignments[i].toString()]!;
-      String recommendation;
-      String priority;
-
-      switch (sortedCluster) {
-        case 1: // Barang Cepat Habis
-          recommendation =
-              'Tingkatkan frekuensi restock dan pertimbangkan untuk menambah stok safety. '
-              'Perhatikan tren permintaan untuk antisipasi lonjakan.';
-          priority = 'Tinggi';
-          break;
-        case 2: // Barang Kebutuhan Normal
-          recommendation =
-              'Pertahankan level stok saat ini dengan pemantauan berkala. '
-              'Lakukan restock sesuai jadwal normal.';
-          priority = 'Sedang';
-          break;
-        case 3: // Barang Jarang Terpakai
-          recommendation =
-              'Kurangi jumlah stok untuk menghindari dead stock. '
-              'Pertimbangkan promosi atau bundling untuk meningkatkan perputaran.';
-          priority = 'Rendah';
-          break;
-        default:
-          recommendation = 'Lakukan analisis lebih lanjut.';
-          priority = 'Sedang';
-      }
-
-      recommendations.add({
-        'itemId': items[i].id,
-        'namaBarang': items[i].namaBarang,
-        'cluster': sortedCluster,
-        'recommendation': recommendation,
-        'priority': priority,
-      });
-    }
-
-    return recommendations;
-  }
-
-  Future<String> _saveToFirebase(Map<String, dynamic> result) async {
-    final docRef = await _firestore.collection('kmeans_results').add(result);
-    return docRef.id;
-  }
-
-  String? validateRequired(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Field ini wajib diisi';
-    }
-    return null;
-  }
-
-  String? validateNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Field ini wajib diisi';
-    }
-    if (double.tryParse(value) == null) {
-      return 'Masukkan angka yang valid';
-    }
-    return null;
+    return rankedItems.asMap().entries.map((entry) {
+      final i = entry.key;
+      final item = entry.value;
+      return {...item, 'rank': i + 1};
+    }).toList();
   }
 }

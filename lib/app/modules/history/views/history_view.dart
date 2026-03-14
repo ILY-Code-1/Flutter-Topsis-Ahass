@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../../../themes/themes.dart';
 import '../controllers/history_controller.dart';
 import '../../admin_dashboard/widgets/admin_drawer.dart';
+import '../../../services/pdf_service.dart';
+import '../../../models/analisis_topsis_model.dart';
 
 class HistoryView extends GetView<HistoryController> {
   const HistoryView({super.key});
@@ -24,7 +26,7 @@ class HistoryView extends GetView<HistoryController> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'History',
+              'Riwayat Analisis TOPSIS',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -47,7 +49,7 @@ class HistoryView extends GetView<HistoryController> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: controller.fetchResults,
+            onPressed: controller.fetchAnalysisHistory,
             tooltip: 'Refresh',
           ),
           const SizedBox(width: 8),
@@ -62,11 +64,12 @@ class HistoryView extends GetView<HistoryController> {
           ),
         ),
         child: Obx(() {
-          if (controller.isLoading.value && controller.results.isEmpty) {
+          if (controller.isLoading.value &&
+              controller.analysisHistory.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (controller.results.isEmpty) {
+          if (controller.analysisHistory.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -100,7 +103,7 @@ class HistoryView extends GetView<HistoryController> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Hasil analisis K-Means akan muncul di sini',
+                    'Hasil analisis TOPSIS akan muncul di sini',
                     style: AppTextStyles.bodyLarge.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -143,7 +146,7 @@ class HistoryView extends GetView<HistoryController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Riwayat Analisis K-Means',
+                                'Riwayat Analisis TOPSIS',
                                 style: AppTextStyles.h3.copyWith(
                                   color: AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
@@ -158,7 +161,9 @@ class HistoryView extends GetView<HistoryController> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.hondaRed.withOpacity(0.1),
+                                      color: AppColors.hondaRed.withOpacity(
+                                        0.1,
+                                      ),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
@@ -170,7 +175,7 @@ class HistoryView extends GetView<HistoryController> {
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
-                                          'Total: ${controller.results.length} analisis',
+                                          'Total: ${controller.analysisHistory.length} analisis',
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
                                                 color: AppColors.hondaRed,
@@ -241,226 +246,44 @@ class HistoryView extends GetView<HistoryController> {
             headingRowColor: WidgetStateProperty.all(
               AppColors.hondaRed.withOpacity(0.08),
             ),
-            columns: [
-              DataColumn(
-                label: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 18,
-                      color: AppColors.hondaRed,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Tanggal & Waktu',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.hondaRed,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              DataColumn(
-                label: Row(
-                  children: [
-                    Icon(
-                      Icons.inventory_2_outlined,
-                      size: 18,
-                      color: AppColors.hondaRed,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Total Items',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.hondaRed,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              DataColumn(
-                label: Row(
-                  children: [
-                    Icon(Icons.refresh, size: 18, color: AppColors.hondaRed),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Iterasi',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.hondaRed,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              DataColumn(
-                label: Row(
-                  children: [
-                    Icon(
-                      Icons.settings_outlined,
-                      size: 18,
-                      color: AppColors.hondaRed,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Aksi',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.hondaRed,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            columns: const [
+              DataColumn(label: Text('Tanggal Analisis')),
+              DataColumn(label: Text('Periode')),
+              DataColumn(label: Text('Total Item')),
+              DataColumn(label: Text('Action')),
             ],
-            rows: controller.results.asMap().entries.map((entry) {
-              final index = entry.key;
-              final result = entry.value;
-
+            rows: controller.analysisHistory.map((analysis) {
               return DataRow(
-                color: WidgetStateProperty.resolveWith<Color>((
-                  Set<WidgetState> states,
-                ) {
-                  if (index.isEven) {
-                    return AppColors.softBlue.withOpacity(0.3);
-                  }
-                  return Colors.white;
-                }),
                 cells: [
                   DataCell(
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.hondaRed.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.event,
-                            size: 20,
-                            color: AppColors.hondaRed,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          controller.formatTimestamp(result['timestamp']),
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Text(controller.formatTimestamp(analysis.createdAt)),
                   ),
                   DataCell(
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue.shade400, Colors.blue.shade600],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        '${result['totalItems'] ?? 0} items',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
+                    Text('${analysis.periodeBulan}/${analysis.periodeTahun}'),
                   ),
-                  DataCell(
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.green.shade400,
-                            Colors.green.shade600,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.green.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        '${result['iterations'] ?? 0}x',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
+                  DataCell(Text(analysis.totalItems.toString())),
                   DataCell(
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade50,
-                            borderRadius: BorderRadius.circular(8),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.visibility,
+                            color: Colors.blue,
                           ),
-                          child: IconButton(
-                            icon: const Icon(Icons.visibility_outlined),
-                            color: Colors.green.shade700,
-                            tooltip: 'Detail',
-                            onPressed: () =>
-                                controller.showDetailDialog(result),
-                          ),
+                          onPressed: () =>
+                              controller.navigateToDetail(analysis),
+                          tooltip: 'Lihat Detail',
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.download_outlined),
-                            color: Colors.blue.shade700,
-                            tooltip: 'Download PDF',
-                            onPressed: () => controller.downloadPDF(result),
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.download, color: Colors.green),
+                          onPressed: () => _downloadPdf(analysis),
+                          tooltip: 'Download PDF',
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.delete_outline),
-                            color: Colors.red.shade700,
-                            tooltip: 'Hapus',
-                            onPressed: () => controller.deleteResult(
-                              result['id'],
-                              result['timestamp'],
-                            ),
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () =>
+                              controller.deleteAnalysis(analysis.analysisId),
+                          tooltip: 'Hapus Riwayat',
                         ),
                       ],
                     ),
@@ -493,129 +316,41 @@ class HistoryView extends GetView<HistoryController> {
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
-        children: controller.results.map((result) {
-          return Container(
+        children: controller.analysisHistory.map((analysis) {
+          return Card(
             margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.white, AppColors.softBlue.withOpacity(0.3)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.hondaRed.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.hondaRed.withOpacity(0.2),
-                              AppColors.hondaRed.withOpacity(0.1),
-                            ],
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.analytics,
-                          color: AppColors.hondaRed,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              controller.formatTimestamp(result['timestamp']),
-                              style: AppTextStyles.bodyLarge.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                _buildMobileBadge(
-                                  '${result['totalItems'] ?? 0} items',
-                                  Colors.blue,
-                                  Icons.inventory_2,
-                                ),
-                                _buildMobileBadge(
-                                  '${result['iterations'] ?? 0}x',
-                                  Colors.green,
-                                  Icons.refresh,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  Text(
+                    controller.formatTimestamp(analysis.createdAt),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 12),
                   const Divider(),
-                  const SizedBox(height: 8),
+                  Text(
+                    'Periode: ${analysis.periodeBulan}/${analysis.periodeTahun}',
+                  ),
+                  Text('Total Item: ${analysis.totalItems}'),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.visibility_outlined),
-                          color: Colors.green.shade700,
-                          onPressed: () => controller.showDetailDialog(result),
-                          tooltip: 'Detail',
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.visibility, color: Colors.blue),
+                        onPressed: () => controller.navigateToDetail(analysis),
+                        tooltip: 'Lihat Detail',
                       ),
-                      const SizedBox(width: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.download_outlined),
-                          color: Colors.blue.shade700,
-                          onPressed: () => controller.downloadPDF(result),
-                          tooltip: 'Download',
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.download, color: Colors.green),
+                        onPressed: () => _downloadPdf(analysis),
+                        tooltip: 'Download PDF',
                       ),
-                      const SizedBox(width: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          color: Colors.red.shade700,
-                          onPressed: () => controller.deleteResult(
-                            result['id'],
-                            result['timestamp'],
-                          ),
-                          tooltip: 'Hapus',
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () =>
+                            controller.deleteAnalysis(analysis.analysisId),
+                        tooltip: 'Hapus Riwayat',
                       ),
                     ],
                   ),
@@ -628,39 +363,36 @@ class HistoryView extends GetView<HistoryController> {
     );
   }
 
-  Widget _buildMobileBadge(String label, Color color, IconData icon) {
-    // Create gradient colors manually since Color doesn't have shade property
-    final Color lightColor = Color.lerp(color, Colors.white, 0.2)!;
-    final Color darkColor = Color.lerp(color, Colors.black, 0.2)!;
+  Future<void> _downloadPdf(AnalisisTopsisModel analysis) async {
+    try {
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(color: AppColors.hondaRed),
+        ),
+        barrierDismissible: false,
+      );
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [lightColor, darkColor]),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.white, size: 14),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
+      await PdfService.generateAndDownloadTopsisPdf(analysis);
+
+      Get.back();
+
+      Get.snackbar(
+        'Berhasil',
+        'PDF berhasil diunduh',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      Get.back();
+
+      Get.snackbar(
+        'Error',
+        'Gagal mengunduh PDF: ${e.toString()}',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 }

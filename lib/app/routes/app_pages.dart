@@ -3,6 +3,7 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/topsis/bindings/topsis_binding.dart';
 import '../modules/topsis/views/topsis_view.dart';
+import '../modules/topsis/views/topsis_detail_view.dart';
 import '../modules/form/bindings/form_binding.dart';
 import '../modules/form/views/form_view.dart';
 import '../modules/success/views/success_view.dart';
@@ -16,8 +17,6 @@ import '../modules/quick_calc/bindings/quick_calc_binding.dart';
 import '../modules/quick_calc/views/quick_calc_view.dart';
 import '../modules/history/bindings/history_binding.dart';
 import '../modules/history/views/history_view.dart';
-import '../modules/upload_excel/bindings/upload_excel_binding.dart';
-import '../modules/upload_excel/views/upload_excel_view.dart';
 import '../modules/admin_dashboard/bindings/admin_dashboard_binding.dart';
 import '../modules/admin_dashboard/views/admin_dashboard_view.dart';
 import '../modules/staff_dashboard/bindings/staff_dashboard_binding.dart';
@@ -56,6 +55,14 @@ class AppPages {
     GetPage(
       name: Routes.topsis,
       page: () => const TopsisView(),
+      binding: TopsisBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.topsisDetail,
+      page: () => TopsisDetailView(),
       binding: TopsisBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
@@ -121,14 +128,6 @@ class AppPages {
       page: () => const HistoryView(),
       binding: HistoryBinding(),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 300),
-      middlewares: [AuthMiddleware()],
-    ),
-    GetPage(
-      name: Routes.uploadExcel,
-      page: () => const UploadExcelView(),
-      binding: UploadExcelBinding(),
-      transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
       middlewares: [AuthMiddleware()],
     ),

@@ -1,3 +1,4 @@
+
 part of 'app_pages.dart';
 
 abstract class Routes {
@@ -6,6 +7,7 @@ abstract class Routes {
   static const home = '/';
   static const login = '/login';
   static const topsis = '/topsis';
+  static const topsisDetail = '/topsis-detail';
   static const form = '/form';
   static const success = '/success';
   static const guide = '/guide';
@@ -14,7 +16,6 @@ abstract class Routes {
   static const adminStock = '/admin-stock';
   static const quickCalc = '/quick-calc';
   static const history = '/history';
-  static const uploadExcel = '/upload-excel';
   static const adminDashboard = '/admin-dashboard';
   static const staffDashboard = '/staff-dashboard';
   static const staffStock = '/staff-stock';

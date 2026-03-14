@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import '../../../models/barang_masuk_model.dart';
+import '../../../models/barang_keluar_model.dart';
 
 class AdminDashboardController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -55,21 +57,38 @@ class AdminDashboardController extends GetxController {
       final itemsSnapshot = await _firestore.collection('items').get();
       totalItems.value = itemsSnapshot.docs.length;
 
-      // Fetch barang masuk data (frekuensi dan total quantity)
-      final barangMasukSnapshot = await _firestore.collection('barang_masuk').get();
+      // Fetch current month and year
+      final now = DateTime.now();
+      final firstDayOfMonth = DateTime(now.year, now.month, 1);
+      final lastDayOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+
+      // Fetch barang masuk data (current month)
+      final barangMasukSnapshot = await _firestore
+          .collection('barang_masuk')
+          .where('tanggal', isGreaterThanOrEqualTo: Timestamp.fromDate(firstDayOfMonth))
+          .where('tanggal', isLessThanOrEqualTo: Timestamp.fromDate(lastDayOfMonth))
+          .get();
+
       frekuensiBarangMasuk.value = barangMasukSnapshot.docs.length;
       int masukCount = 0;
       for (var doc in barangMasukSnapshot.docs) {
-        masukCount += (doc.data()['jumlah'] as int? ?? 0);
+        final data = BarangMasukModel.fromMap(doc.data());
+        masukCount += data.jumlah;
       }
       totalBarangMasuk.value = masukCount;
 
-      // Fetch barang keluar data (frekuensi dan total quantity)
-      final barangKeluarSnapshot = await _firestore.collection('barang_keluar').get();
+      // Fetch barang keluar data (current month)
+      final barangKeluarSnapshot = await _firestore
+          .collection('barang_keluar')
+          .where('tanggal', isGreaterThanOrEqualTo: Timestamp.fromDate(firstDayOfMonth))
+          .where('tanggal', isLessThanOrEqualTo: Timestamp.fromDate(lastDayOfMonth))
+          .get();
+
       frekuensiBarangKeluar.value = barangKeluarSnapshot.docs.length;
       int keluarCount = 0;
       for (var doc in barangKeluarSnapshot.docs) {
-        keluarCount += (doc.data()['jumlah'] as int? ?? 0);
+        final data = BarangKeluarModel.fromMap(doc.data());
+        keluarCount += data.jumlah;
       }
       totalBarangKeluar.value = keluarCount;
 
