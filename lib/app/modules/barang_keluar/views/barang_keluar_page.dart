@@ -10,8 +10,19 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
   const BarangKeluarPage({super.key});
 
   static const List<String> _months = [
-    'Semua', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    'Semua',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
   ];
 
   @override
@@ -53,10 +64,7 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              AppColors.softPink.withValues(alpha: 0.3),
-              Colors.white,
-            ],
+            colors: [AppColors.softPink.withValues(alpha: 0.3), Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -116,29 +124,35 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Obx(() => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.move_to_inbox_rounded,
-                                size: 16, color: AppColors.error),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Total: ${controller.displayRecords.length} transaksi',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.error,
-                                fontWeight: FontWeight.w600,
-                              ),
+                  Obx(
+                    () => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.move_to_inbox_rounded,
+                            size: 16,
+                            color: AppColors.error,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Total: ${controller.displayRecords.length} transaksi',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.error,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
-                        ),
-                      )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
               // Add button
@@ -146,7 +160,7 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
                 onPressed: () => Get.dialog(const AddBarangKeluarDialog()),
                 icon: const Icon(Icons.add, color: Colors.white, size: 18),
                 label: const Text(
-                  '+ BARANG KELUAR',
+                  'BARANG KELUAR',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -159,7 +173,8 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14,
+                    horizontal: 16,
+                    vertical: 14,
                   ),
                 ),
               ),
@@ -177,23 +192,24 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: DropdownButtonHideUnderline(
-                    child: Obx(() => DropdownButton<String>(
-                          isExpanded: true,
-                          hint: const Text('Pilih Bulan'),
-                          value: controller.selectedMonth.value.isNotEmpty
-                              ? controller.selectedMonth.value
-                              : null,
-                          items: _months
-                              .map((m) => DropdownMenuItem(
-                                    value: m,
-                                    child: Text(m),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            controller.selectedMonth.value = value ?? '';
-                            controller.applyMonthFilter();
-                          },
-                        )),
+                    child: Obx(
+                      () => DropdownButton<String>(
+                        isExpanded: true,
+                        hint: const Text('Pilih Bulan'),
+                        value: controller.selectedMonth.value.isNotEmpty
+                            ? controller.selectedMonth.value
+                            : null,
+                        items: _months
+                            .map(
+                              (m) => DropdownMenuItem(value: m, child: Text(m)),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          controller.selectedMonth.value = value ?? '';
+                          controller.applyMonthFilter();
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -225,9 +241,11 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
           child: Center(
             child: Column(
               children: [
-                Icon(Icons.move_to_inbox_outlined,
-                    size: 64,
-                    color: AppColors.hondaRed.withValues(alpha: 0.4)),
+                Icon(
+                  Icons.move_to_inbox_outlined,
+                  size: 64,
+                  color: AppColors.hondaRed.withValues(alpha: 0.4),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'Belum ada data barang keluar',
@@ -286,11 +304,36 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
               AppColors.error.withValues(alpha: 0.08),
             ),
             columns: const [
-              DataColumn(label: _TableHeader(label: 'Tanggal Keluar', icon: Icons.calendar_today_outlined)),
-              DataColumn(label: _TableHeader(label: 'Kode Barang', icon: Icons.qr_code_outlined)),
-              DataColumn(label: _TableHeader(label: 'Nama Barang', icon: Icons.inventory_2_outlined)),
-              DataColumn(label: _TableHeader(label: 'Jumlah Keluar', icon: Icons.remove_circle_outline)),
-              DataColumn(label: _TableHeader(label: 'Input Oleh', icon: Icons.person_outline)),
+              DataColumn(
+                label: _TableHeader(
+                  label: 'Tanggal Keluar',
+                  icon: Icons.calendar_today_outlined,
+                ),
+              ),
+              DataColumn(
+                label: _TableHeader(
+                  label: 'Kode Barang',
+                  icon: Icons.qr_code_outlined,
+                ),
+              ),
+              DataColumn(
+                label: _TableHeader(
+                  label: 'Nama Barang',
+                  icon: Icons.inventory_2_outlined,
+                ),
+              ),
+              DataColumn(
+                label: _TableHeader(
+                  label: 'Jumlah Keluar',
+                  icon: Icons.remove_circle_outline,
+                ),
+              ),
+              DataColumn(
+                label: _TableHeader(
+                  label: 'Input Oleh',
+                  icon: Icons.person_outline,
+                ),
+              ),
             ],
             rows: controller.displayRecords.asMap().entries.map((entry) {
               final index = entry.key;
@@ -303,13 +346,17 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
                       : Colors.white,
                 ),
                 cells: [
-                  DataCell(Text(controller.formatDate(date), style: _cellStyle)),
+                  DataCell(
+                    Text(controller.formatDate(date), style: _cellStyle),
+                  ),
                   DataCell(Text(record.idBarang, style: _cellStyle)),
                   DataCell(Text(record.namaBarang, style: _cellStyle)),
                   DataCell(
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -345,7 +392,9 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: AppColors.error.withValues(alpha: 0.3), width: 1),
+              color: AppColors.error.withValues(alpha: 0.3),
+              width: 1,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
@@ -360,15 +409,19 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(record.namaBarang,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: AppColors.textPrimary,
-                      )),
+                  Text(
+                    record.namaBarang,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
@@ -385,17 +438,29 @@ class BarangKeluarPage extends GetView<BarangKeluarController> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text('Kode: ${record.idBarang}',
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.textSecondary)),
+              Text(
+                'Kode: ${record.idBarang}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text('Tanggal: ${controller.formatDate(date)}',
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.textSecondary)),
+              Text(
+                'Tanggal: ${controller.formatDate(date)}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text('Input oleh: ${record.inputOleh}',
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.textSecondary)),
+              Text(
+                'Input oleh: ${record.inputOleh}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
             ],
           ),
         );

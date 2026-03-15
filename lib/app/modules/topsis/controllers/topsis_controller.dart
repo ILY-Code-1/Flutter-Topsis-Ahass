@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../../../models/analisis_topsis_model.dart';
 import '../../../models/item_model.dart';
-import '../../../models/stock_snapshot_model.dart';
 import '../../../models/barang_keluar_model.dart';
 import '../../../services/item_service.dart';
 import '../../../services/topsis_service.dart';
