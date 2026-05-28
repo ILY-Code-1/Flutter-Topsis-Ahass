@@ -20,7 +20,6 @@ class ItemManagementController extends GetxController {
   final kategoriController = TextEditingController();
   final stokSekarangController = TextEditingController();
   final stokMinimumController = TextEditingController();
-  final leadTimeController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   // Mode edit atau tambah
@@ -39,7 +38,6 @@ class ItemManagementController extends GetxController {
     kategoriController.dispose();
     stokSekarangController.dispose();
     stokMinimumController.dispose();
-    leadTimeController.dispose();
     super.onClose();
   }
 
@@ -71,7 +69,6 @@ class ItemManagementController extends GetxController {
     kategoriController.clear();
     stokSekarangController.clear();
     stokMinimumController.clear();
-    leadTimeController.clear();
   }
 
   // Load data ke form untuk edit
@@ -82,7 +79,6 @@ class ItemManagementController extends GetxController {
     kategoriController.text = item.kategori;
     stokSekarangController.text = item.stokSekarang.toString();
     stokMinimumController.text = item.stokMinimum.toString();
-    leadTimeController.text = item.leadTime.toString();
   }
 
   // Format angka ke Rupiah
@@ -125,7 +121,6 @@ class ItemManagementController extends GetxController {
       final kategori = kategoriController.text.trim();
       final stokSekarang = int.parse(stokSekarangController.text);
       final stokMinimum = int.parse(stokMinimumController.text);
-      final leadTime = int.parse(leadTimeController.text);
 
       // Calculate status stok automatically
       final statusStok = ItemModel.calculateStatusStok(
@@ -139,7 +134,6 @@ class ItemManagementController extends GetxController {
         kategori: kategori,
         stokSekarang: stokSekarang,
         stokMinimum: stokMinimum,
-        leadTime: leadTime,
         statusStok: statusStok,
         lastUpdate: Timestamp.now(),
       );

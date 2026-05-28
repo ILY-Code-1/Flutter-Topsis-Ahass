@@ -10,7 +10,6 @@ class ItemModel {
   final String kategori;
   final int stokSekarang;
   final int stokMinimum;
-  final int leadTime;
   final String statusStok;
   final Timestamp lastUpdate;
 
@@ -20,7 +19,6 @@ class ItemModel {
     required this.kategori,
     required this.stokSekarang,
     required this.stokMinimum,
-    required this.leadTime,
     required this.statusStok,
     required this.lastUpdate,
   });
@@ -33,7 +31,6 @@ class ItemModel {
       kategori: map['kategori'] as String,
       stokSekarang: (map['stok_sekarang'] as num).toInt(),
       stokMinimum: (map['stok_minimum'] as num).toInt(),
-      leadTime: (map['lead_time'] as num).toInt(),
       statusStok: map['status_stok'] as String,
       lastUpdate: map['last_update'] as Timestamp,
     );
@@ -47,7 +44,6 @@ class ItemModel {
       'kategori': kategori,
       'stok_sekarang': stokSekarang,
       'stok_minimum': stokMinimum,
-      'lead_time': leadTime,
       'status_stok': statusStok,
       'last_update': lastUpdate,
     };
@@ -76,7 +72,6 @@ class ItemModel {
     String? kategori,
     int? stokSekarang,
     int? stokMinimum,
-    int? leadTime,
     String? statusStok,
     Timestamp? lastUpdate,
   }) {
@@ -86,7 +81,6 @@ class ItemModel {
       kategori: kategori ?? this.kategori,
       stokSekarang: stokSekarang ?? this.stokSekarang,
       stokMinimum: stokMinimum ?? this.stokMinimum,
-      leadTime: leadTime ?? this.leadTime,
       statusStok: statusStok ?? this.statusStok,
       lastUpdate: lastUpdate ?? this.lastUpdate,
     );
@@ -94,7 +88,7 @@ class ItemModel {
 
   @override
   String toString() {
-    return 'ItemModel(idBarang: $idBarang, namaBarang: $namaBarang, kategori: $kategori, stokSekarang: $stokSekarang, stokMinimum: $stokMinimum, leadTime: $leadTime, statusStok: $statusStok, lastUpdate: $lastUpdate)';
+    return 'ItemModel(idBarang: $idBarang, namaBarang: $namaBarang, kategori: $kategori, stokSekarang: $stokSekarang, stokMinimum: $stokMinimum, statusStok: $statusStok, lastUpdate: $lastUpdate)';
   }
 
   @override
@@ -107,7 +101,6 @@ class ItemModel {
         other.kategori == kategori &&
         other.stokSekarang == stokSekarang &&
         other.stokMinimum == stokMinimum &&
-        other.leadTime == leadTime &&
         other.statusStok == statusStok &&
         other.lastUpdate == lastUpdate;
   }
@@ -119,7 +112,6 @@ class ItemModel {
         kategori.hashCode ^
         stokSekarang.hashCode ^
         stokMinimum.hashCode ^
-        leadTime.hashCode ^
         statusStok.hashCode ^
         lastUpdate.hashCode;
   }

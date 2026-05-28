@@ -102,7 +102,6 @@ class StockTableWidget extends StatelessWidget {
                   _buildDataCell(item.namaBarang),
                   _buildDataCell(item.stokMinimum.toString()),
                   _buildDataCell(item.stokSekarang.toString()),
-                  _buildDataCell('${item.leadTime} hari'),
                   _buildDataCell(_formatTimestamp(item.lastUpdate)),
                   _buildStatusCell(item.statusStok),
                   if (config.showActions)
@@ -228,10 +227,6 @@ class StockTableWidget extends StatelessWidget {
                         'Stok Saat Ini: ${item.stokSekarang}',
                         Icons.looks_two_outlined,
                       ),
-                      _buildInfoChip(
-                        'Lead Time: ${item.leadTime} hari',
-                        Icons.access_time_outlined,
-                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -257,7 +252,6 @@ class StockTableWidget extends StatelessWidget {
       _buildDataColumn('Nama Barang', Icons.inventory_2_outlined),
       _buildDataColumn('Stok Minimum', Icons.looks_one_outlined),
       _buildDataColumn('Stok Saat Ini', Icons.looks_two_outlined),
-      _buildDataColumn('Lead Time (Hari)', Icons.access_time_outlined),
       _buildDataColumn('Tanggal Update', Icons.calendar_today_outlined),
       _buildDataColumn('Status Stok', Icons.info_outline),
     ];

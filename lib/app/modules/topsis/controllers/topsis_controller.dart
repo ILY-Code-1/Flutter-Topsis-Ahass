@@ -61,12 +61,11 @@ class TopsisController extends GetxController {
         itemStats[tx.idBarang]!.add(tx.jumlah);
       }
 
-      // Step 2: Build decision matrix using real-time items (4 criteria: stok_sekarang, stok_minimum, total_keluar, frekuensi_keluar)
+      // Step 2: Build decision matrix using real-time items (3 criteria: stok_sekarang, total_keluar, frekuensi_keluar)
       // Criteria:
       // 0: stok_sekarang (cost)
-      // 1: stok_minimum (benefit)
-      // 2: total_keluar (benefit)
-      // 3: frekuensi_keluar (benefit)
+      // 1: total_keluar (benefit)
+      // 2: frekuensi_keluar (benefit)
       final matrix = currentItems.map((item) {
         final stats = itemStats[item.idBarang] ?? [];
         final totalKeluar = stats.fold<int>(0, (sum, qty) => sum + qty);
@@ -74,7 +73,6 @@ class TopsisController extends GetxController {
 
         return [
           item.stokSekarang.toDouble(),
-          item.stokMinimum.toDouble(),
           totalKeluar.toDouble(),
           frekuensiKeluar.toDouble(),
         ];
@@ -83,9 +81,9 @@ class TopsisController extends GetxController {
       // Step 3: Normalize matrix
       final normalizedMatrix = _normalizeMatrix(matrix);
 
-      // Step 4: Apply weights (adjusting to 4 criteria)
-      // stok_sekarang: 0.25, stok_minimum: 0.2, total_keluar: 0.3, frekuensi_keluar: 0.25
-      final weights = [0.25, 0.2, 0.3, 0.25];
+      // Step 4: Apply weights (3 criteria)
+      // stok_sekarang: 0.30, total_keluar: 0.45, frekuensi_keluar: 0.25
+      final weights = [0.30, 0.45, 0.25];
       final weightedMatrix = _applyWeights(normalizedMatrix, weights);
 
       // Step 5: Determine ideal solutions
@@ -113,9 +111,8 @@ class TopsisController extends GetxController {
         createdAt: Timestamp.now(),
         totalItems: currentItems.length,
         criteria: [
-          {'name': 'stok_sekarang', 'type': 'cost', 'weight': 0.25},
-          {'name': 'stok_minimum', 'type': 'benefit', 'weight': 0.2},
-          {'name': 'total_keluar', 'type': 'benefit', 'weight': 0.3},
+          {'name': 'stok_sekarang', 'type': 'cost', 'weight': 0.30},
+          {'name': 'total_keluar', 'type': 'benefit', 'weight': 0.45},
           {'name': 'frekuensi_keluar', 'type': 'benefit', 'weight': 0.25},
         ],
         results: rankedItems,
@@ -185,7 +182,7 @@ class TopsisController extends GetxController {
         positiveIdeal[j] = column.reduce(min);
         negativeIdeal[j] = column.reduce(max);
       } else {
-        // Benefit criteria (stok_minimum, total_keluar, frekuensi_keluar)
+        // Benefit criteria (total_keluar, frekuensi_keluar)
         positiveIdeal[j] = column.reduce(max);
         negativeIdeal[j] = column.reduce(min);
       }
@@ -235,8 +232,6 @@ class TopsisController extends GetxController {
             'nama_barang': item.namaBarang,
             'nilai_preferensi': preferenceValues[i],
             'stok_sekarang': item.stokSekarang,
-            'stok_minimum': item.stokMinimum,
-            'lead_time': item.leadTime,
             'total_keluar': totalKeluar,
             'frekuensi_keluar': frekuensiKeluar,
             'status_stok': item.statusStok,

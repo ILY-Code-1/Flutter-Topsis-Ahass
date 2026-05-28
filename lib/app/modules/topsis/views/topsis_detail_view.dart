@@ -551,12 +551,8 @@ class TopsisDetailView extends GetView<TopsisController> {
                   DataColumn(
                     label: _TableHeader('Nama Barang', Icons.inventory_2),
                   ),
-                  DataColumn(label: _TableHeader('Stok Min', Icons.looks_one)),
                   DataColumn(
                     label: _TableHeader('Stok Saat Ini', Icons.looks_two),
-                  ),
-                  DataColumn(
-                    label: _TableHeader('Lead Time (Hari)', Icons.access_time),
                   ),
                   DataColumn(label: _TableHeader('Total Keluar', Icons.output)),
                   DataColumn(label: _TableHeader('Frekuensi', Icons.update)),
@@ -582,9 +578,7 @@ class TopsisDetailView extends GetView<TopsisController> {
                       DataCell(Text(item['rank']?.toString() ?? '-')),
                       DataCell(Text(item['id_barang']?.toString() ?? '-')),
                       DataCell(Text(item['nama_barang']?.toString() ?? '-')),
-                      DataCell(Text(item['stok_minimum']?.toString() ?? '0')),
                       DataCell(Text(item['stok_sekarang']?.toString() ?? '0')),
-                      DataCell(Text(item['lead_time']?.toString() ?? '0')),
                       DataCell(Text(item['total_keluar']?.toString() ?? '-')),
                       DataCell(
                         Text(item['frekuensi_keluar']?.toString() ?? '-'),

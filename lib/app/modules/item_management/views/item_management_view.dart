@@ -544,26 +544,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Lead Time field
-                  CustomInput(
-                    label: 'Lead Time (Hari)',
-                    hint: '7',
-                    controller: controller.leadTimeController,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lead time tidak boleh kosong';
-                      }
-                      final num = int.tryParse(value);
-                      if (num == null || num < 0) {
-                        return 'Masukkan angka yang valid';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.access_time_outlined),
-                    infoTooltip: 'Waktu yang dibutuhkan untuk restock (hari)',
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
 
                   // Info note about status
                   Container(
