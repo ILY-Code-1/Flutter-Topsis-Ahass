@@ -1,0 +1,700 @@
+{
+  "meta": {
+    "criteria": {
+      "C1": {
+        "label": "stok_sekarang",
+        "type": "cost",
+        "weight": 0.3
+      },
+      "C2": {
+        "label": "total_keluar",
+        "type": "benefit",
+        "weight": 0.45
+      },
+      "C3": {
+        "label": "frekuensi_keluar",
+        "type": "benefit",
+        "weight": 0.25
+      }
+    },
+    "method": "TOPSIS - vector normalization",
+    "rounding_note": "values rounded to 6 decimal places; use tolerance abs diff < 1e-4 for float assertions in tests"
+  },
+  "step1_normalization_denominator": {
+    "C1": 74.819783,
+    "C2": 131.346869,
+    "C3": 35.468296
+  },
+  "step1_normalized_matrix": [
+    {
+      "alternatif": "Oli Mesin AHM MPX 1L",
+      "C1": 0.106924,
+      "C2": 0.342604,
+      "C3": 0.366525
+    },
+    {
+      "alternatif": "Kampas Rem Depan Beat/Vario",
+      "C1": 0.066827,
+      "C2": 0.213176,
+      "C3": 0.225554
+    },
+    {
+      "alternatif": "Busi NGK CPR8EA-9",
+      "C1": 0.160385,
+      "C2": 0.228403,
+      "C3": 0.225554
+    },
+    {
+      "alternatif": "Filter Udara Vario 125",
+      "C1": 0.200482,
+      "C2": 0.464419,
+      "C3": 0.366525
+    },
+    {
+      "alternatif": "V-Belt Beat FI",
+      "C1": 0.080193,
+      "C2": 0.380671,
+      "C3": 0.394719
+    },
+    {
+      "alternatif": "Kampas Kopling Honda Supra",
+      "C1": 0.120289,
+      "C2": 0.464419,
+      "C3": 0.394719
+    },
+    {
+      "alternatif": "Oli Gardan AHM 120ml",
+      "C1": 0.240578,
+      "C2": 0.342604,
+      "C3": 0.33833
+    },
+    {
+      "alternatif": "Roller CVT K44",
+      "C1": 0.093558,
+      "C2": 0.213176,
+      "C3": 0.253748
+    },
+    {
+      "alternatif": "Slider K44",
+      "C1": 0.133654,
+      "C2": 0.038067,
+      "C3": 0.084583
+    },
+    {
+      "alternatif": "Kabel Rem Belakang Beat",
+      "C1": 0.267309,
+      "C2": 0.098975,
+      "C3": 0.169165
+    },
+    {
+      "alternatif": "Bohlam Lampu Utama 12V 35W",
+      "C1": 0.29404,
+      "C2": 0.060907,
+      "C3": 0.112777
+    },
+    {
+      "alternatif": "Karet Step Honda Beat",
+      "C1": 0.334136,
+      "C2": 0.060907,
+      "C3": 0.084583
+    },
+    {
+      "alternatif": "Gear Set Supra X 125",
+      "C1": 0.187116,
+      "C2": 0.076134,
+      "C3": 0.112777
+    },
+    {
+      "alternatif": "Rantai Roda DID 428H",
+      "C1": 0.14702,
+      "C2": 0.060907,
+      "C3": 0.084583
+    },
+    {
+      "alternatif": "Kampas rem Belakang KZL",
+      "C1": 0.173751,
+      "C2": 0.076134,
+      "C3": 0.140971
+    },
+    {
+      "alternatif": "Filter Oli Honda CB150",
+      "C1": 0.213847,
+      "C2": 0.045681,
+      "C3": 0.112777
+    },
+    {
+      "alternatif": "Filter Udara KVB",
+      "C1": 0.106924,
+      "C2": 0.083748,
+      "C3": 0.140971
+    },
+    {
+      "alternatif": "Oli AHM MPX 0,8L",
+      "C1": 0.160385,
+      "C2": 0.015227,
+      "C3": 0.028194
+    },
+    {
+      "alternatif": "V-belt K60",
+      "C1": 0.240578,
+      "C2": 0.015227,
+      "C3": 0.028194
+    },
+    {
+      "alternatif": "Bearing Ball 6002",
+      "C1": 0.320771,
+      "C2": 0.02284,
+      "C3": 0.056388
+    },
+    {
+      "alternatif": "Bearing CVT KVB",
+      "C1": 0.200482,
+      "C2": 0.030454,
+      "C3": 0.056388
+    },
+    {
+      "alternatif": "Filter Udara K1Z",
+      "C1": 0.120289,
+      "C2": 0.030454,
+      "C3": 0.056388
+    },
+    {
+      "alternatif": "Kampas rem depan K1Z",
+      "C1": 0.267309,
+      "C2": 0.0,
+      "C3": 0.0
+    },
+    {
+      "alternatif": "Slider K1Z",
+      "C1": 0.227213,
+      "C2": 0.0,
+      "C3": 0.0
+    },
+    {
+      "alternatif": "Cooulent",
+      "C1": 0.187116,
+      "C2": 0.0,
+      "C3": 0.0
+    }
+  ],
+  "step2_weighted_normalized_matrix": [
+    {
+      "alternatif": "Oli Mesin AHM MPX 1L",
+      "C1": 0.032077,
+      "C2": 0.154172,
+      "C3": 0.091631
+    },
+    {
+      "alternatif": "Kampas Rem Depan Beat/Vario",
+      "C1": 0.020048,
+      "C2": 0.095929,
+      "C3": 0.056388
+    },
+    {
+      "alternatif": "Busi NGK CPR8EA-9",
+      "C1": 0.048116,
+      "C2": 0.102781,
+      "C3": 0.056388
+    },
+    {
+      "alternatif": "Filter Udara Vario 125",
+      "C1": 0.060145,
+      "C2": 0.208989,
+      "C3": 0.091631
+    },
+    {
+      "alternatif": "V-Belt Beat FI",
+      "C1": 0.024058,
+      "C2": 0.171302,
+      "C3": 0.09868
+    },
+    {
+      "alternatif": "Kampas Kopling Honda Supra",
+      "C1": 0.036087,
+      "C2": 0.208989,
+      "C3": 0.09868
+    },
+    {
+      "alternatif": "Oli Gardan AHM 120ml",
+      "C1": 0.072173,
+      "C2": 0.154172,
+      "C3": 0.084583
+    },
+    {
+      "alternatif": "Roller CVT K44",
+      "C1": 0.028067,
+      "C2": 0.095929,
+      "C3": 0.063437
+    },
+    {
+      "alternatif": "Slider K44",
+      "C1": 0.040096,
+      "C2": 0.01713,
+      "C3": 0.021146
+    },
+    {
+      "alternatif": "Kabel Rem Belakang Beat",
+      "C1": 0.080193,
+      "C2": 0.044539,
+      "C3": 0.042291
+    },
+    {
+      "alternatif": "Bohlam Lampu Utama 12V 35W",
+      "C1": 0.088212,
+      "C2": 0.027408,
+      "C3": 0.028194
+    },
+    {
+      "alternatif": "Karet Step Honda Beat",
+      "C1": 0.100241,
+      "C2": 0.027408,
+      "C3": 0.021146
+    },
+    {
+      "alternatif": "Gear Set Supra X 125",
+      "C1": 0.056135,
+      "C2": 0.03426,
+      "C3": 0.028194
+    },
+    {
+      "alternatif": "Rantai Roda DID 428H",
+      "C1": 0.044106,
+      "C2": 0.027408,
+      "C3": 0.021146
+    },
+    {
+      "alternatif": "Kampas rem Belakang KZL",
+      "C1": 0.052125,
+      "C2": 0.03426,
+      "C3": 0.035243
+    },
+    {
+      "alternatif": "Filter Oli Honda CB150",
+      "C1": 0.064154,
+      "C2": 0.020556,
+      "C3": 0.028194
+    },
+    {
+      "alternatif": "Filter Udara KVB",
+      "C1": 0.032077,
+      "C2": 0.037686,
+      "C3": 0.035243
+    },
+    {
+      "alternatif": "Oli AHM MPX 0,8L",
+      "C1": 0.048116,
+      "C2": 0.006852,
+      "C3": 0.007049
+    },
+    {
+      "alternatif": "V-belt K60",
+      "C1": 0.072173,
+      "C2": 0.006852,
+      "C3": 0.007049
+    },
+    {
+      "alternatif": "Bearing Ball 6002",
+      "C1": 0.096231,
+      "C2": 0.010278,
+      "C3": 0.014097
+    },
+    {
+      "alternatif": "Bearing CVT KVB",
+      "C1": 0.060145,
+      "C2": 0.013704,
+      "C3": 0.014097
+    },
+    {
+      "alternatif": "Filter Udara K1Z",
+      "C1": 0.036087,
+      "C2": 0.013704,
+      "C3": 0.014097
+    },
+    {
+      "alternatif": "Kampas rem depan K1Z",
+      "C1": 0.080193,
+      "C2": 0.0,
+      "C3": 0.0
+    },
+    {
+      "alternatif": "Slider K1Z",
+      "C1": 0.068164,
+      "C2": 0.0,
+      "C3": 0.0
+    },
+    {
+      "alternatif": "Cooulent",
+      "C1": 0.056135,
+      "C2": 0.0,
+      "C3": 0.0
+    }
+  ],
+  "step3_ideal_solutions": {
+    "A_plus": {
+      "C1": 0.020048,
+      "C2": 0.208989,
+      "C3": 0.09868
+    },
+    "A_minus": {
+      "C1": 0.100241,
+      "C2": 0.0,
+      "C3": 0.0
+    }
+  },
+  "step4_distances": [
+    {
+      "alternatif": "Oli Mesin AHM MPX 1L",
+      "D_plus": 0.056562,
+      "D_minus": 0.191863
+    },
+    {
+      "alternatif": "Kampas Rem Depan Beat/Vario",
+      "D_plus": 0.12071,
+      "D_minus": 0.13716
+    },
+    {
+      "alternatif": "Busi NGK CPR8EA-9",
+      "D_plus": 0.117713,
+      "D_minus": 0.128299
+    },
+    {
+      "alternatif": "Filter Udara Vario 125",
+      "D_plus": 0.040711,
+      "D_minus": 0.23169
+    },
+    {
+      "alternatif": "V-Belt Beat FI",
+      "D_plus": 0.037899,
+      "D_minus": 0.211863
+    },
+    {
+      "alternatif": "Kampas Kopling Honda Supra",
+      "D_plus": 0.016039,
+      "D_minus": 0.239853
+    },
+    {
+      "alternatif": "Oli Gardan AHM 120ml",
+      "D_plus": 0.076946,
+      "D_minus": 0.178076
+    },
+    {
+      "alternatif": "Roller CVT K44",
+      "D_plus": 0.118696,
+      "D_minus": 0.135778
+    },
+    {
+      "alternatif": "Slider K44",
+      "D_plus": 0.207902,
+      "D_minus": 0.066015
+    },
+    {
+      "alternatif": "Kabel Rem Belakang Beat",
+      "D_plus": 0.183959,
+      "D_minus": 0.064608
+    },
+    {
+      "alternatif": "Bohlam Lampu Utama 12V 35W",
+      "D_plus": 0.206364,
+      "D_minus": 0.04112
+    },
+    {
+      "alternatif": "Karet Step Honda Beat",
+      "D_plus": 0.213105,
+      "D_minus": 0.034617
+    },
+    {
+      "alternatif": "Gear Set Supra X 125",
+      "D_plus": 0.191834,
+      "D_minus": 0.062562
+    },
+    {
+      "alternatif": "Rantai Roda DID 428H",
+      "D_plus": 0.198901,
+      "D_minus": 0.065951
+    },
+    {
+      "alternatif": "Kampas rem Belakang KZL",
+      "D_plus": 0.188635,
+      "D_minus": 0.068782
+    },
+    {
+      "alternatif": "Filter Oli Honda CB150",
+      "D_plus": 0.205962,
+      "D_minus": 0.050197
+    },
+    {
+      "alternatif": "Filter Udara KVB",
+      "D_plus": 0.183067,
+      "D_minus": 0.08549
+    },
+    {
+      "alternatif": "Oli AHM MPX 0,8L",
+      "D_plus": 0.223703,
+      "D_minus": 0.053044
+    },
+    {
+      "alternatif": "V-belt K60",
+      "D_plus": 0.227975,
+      "D_minus": 0.029739
+    },
+    {
+      "alternatif": "Bearing Ball 6002",
+      "D_plus": 0.229006,
+      "D_minus": 0.017901
+    },
+    {
+      "alternatif": "Bearing CVT KVB",
+      "D_plus": 0.216559,
+      "D_minus": 0.044657
+    },
+    {
+      "alternatif": "Filter Udara K1Z",
+      "D_plus": 0.213419,
+      "D_minus": 0.067099
+    },
+    {
+      "alternatif": "Kampas rem depan K1Z",
+      "D_plus": 0.238812,
+      "D_minus": 0.020048
+    },
+    {
+      "alternatif": "Slider K1Z",
+      "D_plus": 0.23607,
+      "D_minus": 0.032077
+    },
+    {
+      "alternatif": "Cooulent",
+      "D_plus": 0.233915,
+      "D_minus": 0.044106
+    }
+  ],
+  "step5_preference_value": [
+    {
+      "alternatif": "Oli Mesin AHM MPX 1L",
+      "Ci": 0.772318
+    },
+    {
+      "alternatif": "Kampas Rem Depan Beat/Vario",
+      "Ci": 0.531896
+    },
+    {
+      "alternatif": "Busi NGK CPR8EA-9",
+      "Ci": 0.521516
+    },
+    {
+      "alternatif": "Filter Udara Vario 125",
+      "Ci": 0.850547
+    },
+    {
+      "alternatif": "V-Belt Beat FI",
+      "Ci": 0.848259
+    },
+    {
+      "alternatif": "Kampas Kopling Honda Supra",
+      "Ci": 0.937323
+    },
+    {
+      "alternatif": "Oli Gardan AHM 120ml",
+      "Ci": 0.698278
+    },
+    {
+      "alternatif": "Roller CVT K44",
+      "Ci": 0.533563
+    },
+    {
+      "alternatif": "Slider K44",
+      "Ci": 0.241003
+    },
+    {
+      "alternatif": "Kabel Rem Belakang Beat",
+      "Ci": 0.259921
+    },
+    {
+      "alternatif": "Bohlam Lampu Utama 12V 35W",
+      "Ci": 0.166151
+    },
+    {
+      "alternatif": "Karet Step Honda Beat",
+      "Ci": 0.139742
+    },
+    {
+      "alternatif": "Gear Set Supra X 125",
+      "Ci": 0.245924
+    },
+    {
+      "alternatif": "Rantai Roda DID 428H",
+      "Ci": 0.249009
+    },
+    {
+      "alternatif": "Kampas rem Belakang KZL",
+      "Ci": 0.2672
+    },
+    {
+      "alternatif": "Filter Oli Honda CB150",
+      "Ci": 0.19596
+    },
+    {
+      "alternatif": "Filter Udara KVB",
+      "Ci": 0.318333
+    },
+    {
+      "alternatif": "Oli AHM MPX 0,8L",
+      "Ci": 0.19167
+    },
+    {
+      "alternatif": "V-belt K60",
+      "Ci": 0.115396
+    },
+    {
+      "alternatif": "Bearing Ball 6002",
+      "Ci": 0.072501
+    },
+    {
+      "alternatif": "Bearing CVT KVB",
+      "Ci": 0.170958
+    },
+    {
+      "alternatif": "Filter Udara K1Z",
+      "Ci": 0.239197
+    },
+    {
+      "alternatif": "Kampas rem depan K1Z",
+      "Ci": 0.077448
+    },
+    {
+      "alternatif": "Slider K1Z",
+      "Ci": 0.119625
+    },
+    {
+      "alternatif": "Cooulent",
+      "Ci": 0.158643
+    }
+  ],
+  "step6_ranking": [
+    {
+      "alternatif": "Kampas Kopling Honda Supra",
+      "Ci": 0.937323,
+      "rank": 1
+    },
+    {
+      "alternatif": "Filter Udara Vario 125",
+      "Ci": 0.850547,
+      "rank": 2
+    },
+    {
+      "alternatif": "V-Belt Beat FI",
+      "Ci": 0.848259,
+      "rank": 3
+    },
+    {
+      "alternatif": "Oli Mesin AHM MPX 1L",
+      "Ci": 0.772318,
+      "rank": 4
+    },
+    {
+      "alternatif": "Oli Gardan AHM 120ml",
+      "Ci": 0.698278,
+      "rank": 5
+    },
+    {
+      "alternatif": "Roller CVT K44",
+      "Ci": 0.533563,
+      "rank": 6
+    },
+    {
+      "alternatif": "Kampas Rem Depan Beat/Vario",
+      "Ci": 0.531896,
+      "rank": 7
+    },
+    {
+      "alternatif": "Busi NGK CPR8EA-9",
+      "Ci": 0.521516,
+      "rank": 8
+    },
+    {
+      "alternatif": "Filter Udara KVB",
+      "Ci": 0.318333,
+      "rank": 9
+    },
+    {
+      "alternatif": "Kampas rem Belakang KZL",
+      "Ci": 0.2672,
+      "rank": 10
+    },
+    {
+      "alternatif": "Kabel Rem Belakang Beat",
+      "Ci": 0.259921,
+      "rank": 11
+    },
+    {
+      "alternatif": "Rantai Roda DID 428H",
+      "Ci": 0.249009,
+      "rank": 12
+    },
+    {
+      "alternatif": "Gear Set Supra X 125",
+      "Ci": 0.245924,
+      "rank": 13
+    },
+    {
+      "alternatif": "Slider K44",
+      "Ci": 0.241003,
+      "rank": 14
+    },
+    {
+      "alternatif": "Filter Udara K1Z",
+      "Ci": 0.239197,
+      "rank": 15
+    },
+    {
+      "alternatif": "Filter Oli Honda CB150",
+      "Ci": 0.19596,
+      "rank": 16
+    },
+    {
+      "alternatif": "Oli AHM MPX 0,8L",
+      "Ci": 0.19167,
+      "rank": 17
+    },
+    {
+      "alternatif": "Bearing CVT KVB",
+      "Ci": 0.170958,
+      "rank": 18
+    },
+    {
+      "alternatif": "Bohlam Lampu Utama 12V 35W",
+      "Ci": 0.166151,
+      "rank": 19
+    },
+    {
+      "alternatif": "Cooulent",
+      "Ci": 0.158643,
+      "rank": 20
+    },
+    {
+      "alternatif": "Karet Step Honda Beat",
+      "Ci": 0.139742,
+      "rank": 21
+    },
+    {
+      "alternatif": "Slider K1Z",
+      "Ci": 0.119625,
+      "rank": 22
+    },
+    {
+      "alternatif": "V-belt K60",
+      "Ci": 0.115396,
+      "rank": 23
+    },
+    {
+      "alternatif": "Kampas rem depan K1Z",
+      "Ci": 0.077448,
+      "rank": 24
+    },
+    {
+      "alternatif": "Bearing Ball 6002",
+      "Ci": 0.072501,
+      "rank": 25
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../../models/barang_keluar_model.dart';
 import '../../../models/item_model.dart';
 import '../../../themes/themes.dart';
@@ -20,6 +21,8 @@ class _AddBarangKeluarDialogState extends State<AddBarangKeluarDialog> {
   final _jumlahController = TextEditingController();
 
   ItemModel? _selectedItem;
+  DateTime _selectedDate = DateTime.now();
+  TimeOfDay _selectedTime = TimeOfDay.now();
 
   @override
   void dispose() {
@@ -177,6 +180,97 @@ class _AddBarangKeluarDialogState extends State<AddBarangKeluarDialog> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Tanggal & Waktu',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _selectedDate,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime.now(),
+                          );
+                          if (picked != null) {
+                            setState(() => _selectedDate = DateTime(
+                              picked.year, picked.month, picked.day,
+                              _selectedTime.hour, _selectedTime.minute,
+                            ));
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.border),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, size: 16, color: AppColors.textSecondary),
+                              const SizedBox(width: 8),
+                              Text(
+                                DateFormat('dd MMM yyyy').format(_selectedDate),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final picked = await showTimePicker(
+                            context: context,
+                            initialTime: _selectedTime,
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              _selectedTime = picked;
+                              _selectedDate = DateTime(
+                                _selectedDate.year, _selectedDate.month, _selectedDate.day,
+                                picked.hour, picked.minute,
+                              );
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.border),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
+                              const SizedBox(width: 8),
+                              Text(
+                                _selectedTime.format(context),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 8),
 
                 // Stock info
@@ -268,7 +362,7 @@ class _AddBarangKeluarDialogState extends State<AddBarangKeluarDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     final record = BarangKeluarModel(
-      tanggal: Timestamp.now(),
+      tanggal: Timestamp.fromDate(_selectedDate),
       idBarang: _selectedItem!.idBarang,
       namaBarang: _selectedItem!.namaBarang,
       jumlah: int.parse(_jumlahController.text.trim()),

@@ -1,4 +1,5 @@
-import 'dart:math';
+// [DISABLED FOR TESTING - Firebase] import 'dart:convert';
+// [DISABLED FOR TESTING - Firebase] import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../../../models/analisis_topsis_model.dart';
@@ -6,60 +7,38 @@ import '../../../models/item_model.dart';
 import '../../../models/barang_keluar_model.dart';
 import '../../../services/item_service.dart';
 import '../../../services/topsis_service.dart';
+import '../../../services/topsis_calculator.dart';
 
 class TopsisController extends GetxController {
-  final ItemService _itemService = Get.find<ItemService>();
-  final TopsisService _topsisService = Get.find<TopsisService>();
+  // [STATIC-MODE] Set true untuk pakai data static (alternatif.json), false untuk Firebase
+  static const bool useStaticData = false;
+
+  final TopsisCalculator _calculator = TopsisCalculator();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final isLoading = false.obs;
 
-  Future<void> runAnalysis() async {
+  Future<void> runAnalysis({int? month, int? year}) async {
     try {
       isLoading.value = true;
 
       final now = DateTime.now();
-      final month = now.month;
-      final year = now.year;
+      final analysisMonth = month ?? now.month;
+      final analysisYear = year ?? now.year;
 
       // Step 1: Always fetch the latest items to ensure synchronized stock
-      final currentItems = await _itemService.getItems();
+      final currentItems = await _fetchItems();
       if (currentItems.isEmpty) {
         throw Exception('No items found to analyze');
       }
 
       // Step 1.1: Create or update snapshot for the current month
-      // This ensures the snapshot also stays relatively updated with the last analysis
-      await _topsisService.createSnapshot(currentItems, month, year);
-
-      // Step 1.2: Fetch current month's transactions to sync total_keluar and frekuensi
-      final firstDayOfMonth = DateTime(year, month, 1);
-      final lastDayOfMonth = DateTime(year, month + 1, 0, 23, 59, 59);
-
-      final barangKeluarSnapshot = await _firestore
-          .collection('barang_keluar')
-          .where(
-            'tanggal',
-            isGreaterThanOrEqualTo: Timestamp.fromDate(firstDayOfMonth),
-          )
-          .where(
-            'tanggal',
-            isLessThanOrEqualTo: Timestamp.fromDate(lastDayOfMonth),
-          )
-          .get();
-
-      final List<BarangKeluarModel> transactions = barangKeluarSnapshot.docs
-          .map((doc) => BarangKeluarModel.fromMap(doc.data()))
-          .toList();
-
-      // Create a map for quick lookup
-      final Map<String, List<int>> itemStats = {};
-      for (var tx in transactions) {
-        if (!itemStats.containsKey(tx.idBarang)) {
-          itemStats[tx.idBarang] = [];
-        }
-        itemStats[tx.idBarang]!.add(tx.jumlah);
+      // [STATIC-MODE] Skip snapshot in static mode
+      if (!useStaticData) {
+        await Get.find<TopsisService>().createSnapshot(currentItems, analysisMonth, analysisYear);
       }
+
+      final itemStats = await _fetchItemStats(analysisMonth, analysisYear);
 
       // Step 2: Build decision matrix using real-time items (3 criteria: stok_sekarang, total_keluar, frekuensi_keluar)
       // Criteria:
@@ -79,35 +58,35 @@ class TopsisController extends GetxController {
       }).toList();
 
       // Step 3: Normalize matrix
-      final normalizedMatrix = _normalizeMatrix(matrix);
+      final normalizedMatrix = _calculator.normalizeMatrix(matrix);
 
       // Step 4: Apply weights (3 criteria)
       // stok_sekarang: 0.30, total_keluar: 0.45, frekuensi_keluar: 0.25
       final weights = [0.30, 0.45, 0.25];
-      final weightedMatrix = _applyWeights(normalizedMatrix, weights);
+      final weightedMatrix = _calculator.applyWeights(normalizedMatrix, weights);
 
       // Step 5: Determine ideal solutions
-      final idealSolutions = _getIdealSolutions(weightedMatrix);
+      final idealSolutions = _calculator.getIdealSolutions(weightedMatrix);
       final positiveIdeal = idealSolutions[0];
       final negativeIdeal = idealSolutions[1];
 
       // Step 6 & 7: Calculate distances
-      final distances = _calculateDistances(
+      final distances = _calculator.calculateDistances(
         weightedMatrix,
         positiveIdeal,
         negativeIdeal,
       );
 
       // Step 8: Calculate preference values
-      final preferenceValues = _calculatePreferenceValues(distances);
+      final preferenceValues = _calculator.calculatePreferenceValues(distances);
 
       // Step 9 & 10: Rank items with synced data
       final rankedItems = _rankItems(currentItems, preferenceValues, itemStats);
 
       // Save analysis
       final analysis = AnalisisTopsisModel(
-        periodeBulan: month,
-        periodeTahun: year,
+        periodeBulan: analysisMonth,
+        periodeTahun: analysisYear,
         createdAt: Timestamp.now(),
         totalItems: currentItems.length,
         criteria: [
@@ -118,7 +97,10 @@ class TopsisController extends GetxController {
         results: rankedItems,
       );
 
-      await _topsisService.saveAnalysis(analysis);
+      // [STATIC-MODE] Skip saving to Firebase in static mode
+      if (!useStaticData) {
+        await Get.find<TopsisService>().saveAnalysis(analysis);
+      }
 
       Get.snackbar('Success', 'TOPSIS analysis completed successfully');
     } catch (e) {
@@ -128,92 +110,100 @@ class TopsisController extends GetxController {
     }
   }
 
-  List<List<double>> _normalizeMatrix(List<List<double>> matrix) {
-    if (matrix.isEmpty) return [];
-    final int colCount = matrix[0].length;
-    final List<double> dividers = List.filled(colCount, 0.0);
+  // ─────────────────────────────────────────────────────────
+  // DATA LAYER — Switch antara Firebase dan Static JSON
+  // ─────────────────────────────────────────────────────────
 
-    for (int j = 0; j < colCount; j++) {
-      double sum = 0;
-      for (int i = 0; i < matrix.length; i++) {
-        sum += pow(matrix[i][j], 2);
-      }
-      dividers[j] = sqrt(sum);
-      // Avoid division by zero
-      if (dividers[j] == 0) dividers[j] = 1.0;
-    }
+  Future<List<ItemModel>> _fetchItems() async {
+    // [DISABLED FOR TESTING - Firebase] if (useStaticData) return _loadStaticItems();
+    return await Get.find<ItemService>().getItems();
+  }
 
-    return matrix
-        .map(
-          (row) => row
-              .asMap()
-              .map((j, value) => MapEntry(j, value / dividers[j]))
-              .values
-              .toList(),
+  Future<Map<String, List<int>>> _fetchItemStats(int month, int year) async {
+    // [DISABLED FOR TESTING - Firebase] if (useStaticData) return _loadStaticItemStats();
+    return await _fetchFirestoreItemStats(month, year);
+  }
+
+  // [DISABLED FOR TESTING - Firebase] Static data methods (gunakan Firebase sebagai sumber data)
+  // List<ItemModel> _loadStaticItems() {
+  //   final file = File('alternatif.json');
+  //   final jsonString = file.readAsStringSync();
+  //   final List<dynamic> jsonData = json.decode(jsonString);
+  //
+  //   return jsonData.asMap().entries.map((entry) {
+  //     final i = entry.key;
+  //     final data = entry.value;
+  //     return ItemModel(
+  //       idBarang: 'STATIC_${i + 1}',
+  //       namaBarang: data['alternatif'] as String,
+  //       kategori: 'static',
+  //       stokSekarang: data['C1'] as int,
+  //       stokMinimum: 0,
+  //       statusStok: 'Aman',
+  //       lastUpdate: Timestamp.now(),
+  //     );
+  //   }).toList();
+  // }
+
+  // [DISABLED FOR TESTING - Firebase]
+  // Map<String, List<int>> _loadStaticItemStats() {
+  //   final file = File('alternatif.json');
+  //   final jsonString = file.readAsStringSync();
+  //   final List<dynamic> jsonData = json.decode(jsonString);
+  //
+  //   final Map<String, List<int>> stats = {};
+  //   for (int i = 0; i < jsonData.length; i++) {
+  //     final data = jsonData[i];
+  //     final idBarang = 'STATIC_${i + 1}';
+  //     final totalKeluar = data['C2'] as int;
+  //     final frekuensi = data['C3'] as int;
+  //     stats[idBarang] = _createStatsList(totalKeluar, frekuensi);
+  //   }
+  //   return stats;
+  // }
+
+  // [DISABLED FOR TESTING - Firebase]
+  // List<int> _createStatsList(int totalKeluar, int frekuensi) {
+  //   if (frekuensi == 0) return [];
+  //   if (frekuensi == 1) return [totalKeluar];
+  //   final list = List<int>.filled(frekuensi, 1);
+  //   list[0] = totalKeluar - (frekuensi - 1);
+  //   return list;
+  // }
+
+  Future<Map<String, List<int>>> _fetchFirestoreItemStats(int month, int year) async {
+    final firstDayOfMonth = DateTime(year, month, 1);
+    final lastDayOfMonth = DateTime(year, month + 1, 0, 23, 59, 59);
+
+    final barangKeluarSnapshot = await _firestore
+        .collection('barang_keluar')
+        .where(
+          'tanggal',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(firstDayOfMonth),
         )
-        .toList();
-  }
-
-  List<List<double>> _applyWeights(
-    List<List<double>> matrix,
-    List<double> weights,
-  ) {
-    return matrix
-        .map(
-          (row) => row
-              .asMap()
-              .map((j, value) => MapEntry(j, value * weights[j]))
-              .values
-              .toList(),
+        .where(
+          'tanggal',
+          isLessThanOrEqualTo: Timestamp.fromDate(lastDayOfMonth),
         )
+        .get();
+
+    final List<BarangKeluarModel> transactions = barangKeluarSnapshot.docs
+        .map((doc) => BarangKeluarModel.fromMap(doc.data()))
         .toList();
-  }
 
-  List<List<double>> _getIdealSolutions(List<List<double>> matrix) {
-    if (matrix.isEmpty) return [[], []];
-    final int colCount = matrix[0].length;
-    final positiveIdeal = List<double>.filled(colCount, 0.0);
-    final negativeIdeal = List<double>.filled(colCount, 0.0);
-
-    for (int j = 0; j < colCount; j++) {
-      List<double> column = matrix.map((row) => row[j]).toList();
-      if (j == 0) {
-        // Cost criteria (stok_sekarang)
-        positiveIdeal[j] = column.reduce(min);
-        negativeIdeal[j] = column.reduce(max);
-      } else {
-        // Benefit criteria (total_keluar, frekuensi_keluar)
-        positiveIdeal[j] = column.reduce(max);
-        negativeIdeal[j] = column.reduce(min);
+    final Map<String, List<int>> itemStats = {};
+    for (var tx in transactions) {
+      if (!itemStats.containsKey(tx.idBarang)) {
+        itemStats[tx.idBarang] = [];
       }
+      itemStats[tx.idBarang]!.add(tx.jumlah);
     }
-    return [positiveIdeal, negativeIdeal];
+    return itemStats;
   }
 
-  List<List<double>> _calculateDistances(
-    List<List<double>> matrix,
-    List<double> positiveIdeal,
-    List<double> negativeIdeal,
-  ) {
-    return matrix.map((row) {
-      double dPlus = 0;
-      double dMinus = 0;
-      for (int j = 0; j < row.length; j++) {
-        dPlus += pow(row[j] - positiveIdeal[j], 2);
-        dMinus += pow(row[j] - negativeIdeal[j], 2);
-      }
-      return [sqrt(dPlus), sqrt(dMinus)];
-    }).toList();
-  }
-
-  List<double> _calculatePreferenceValues(List<List<double>> distances) {
-    return distances.map((d) {
-      final dPlus = d[0];
-      final dMinus = d[1];
-      if ((dPlus + dMinus) == 0) return 0.0;
-      return dMinus / (dPlus + dMinus);
-    }).toList();
-  }
+  // ─────────────────────────────────────────────────────────
+  // TOPSIS MATH — Delegated to TopsisCalculator
+  // ─────────────────────────────────────────────────────────
 
   List<Map<String, dynamic>> _rankItems(
     List<ItemModel> items,

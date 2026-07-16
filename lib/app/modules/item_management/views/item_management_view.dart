@@ -297,7 +297,18 @@ class ItemManagementView extends GetView<ItemManagementController> {
                                   onPressed: topsisController.isLoading.value
                                       ? null
                                       : () async {
-                                          await topsisController.runAnalysis();
+                                          int? analysisMonth;
+                                          if (controller.selectedMonth.value.isNotEmpty &&
+                                              controller.selectedMonth.value != 'Semua') {
+                                            final monthMap = {
+                                              'Januari': 1, 'Februari': 2, 'Maret': 3,
+                                              'April': 4, 'Mei': 5, 'Juni': 6,
+                                              'Juli': 7, 'Agustus': 8, 'September': 9,
+                                              'Oktober': 10, 'November': 11, 'Desember': 12,
+                                            };
+                                            analysisMonth = monthMap[controller.selectedMonth.value];
+                                          }
+                                          await topsisController.runAnalysis(month: analysisMonth);
                                           controller.fetchItems();
                                         },
                                   icon: topsisController.isLoading.value

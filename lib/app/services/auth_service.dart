@@ -3,6 +3,26 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class AuthService extends GetxService {
+  // [STATIC-MODE] Set true untuk pakai dummy users, false untuk Firebase
+  static const bool useStaticData = true;
+
+  static const List<Map<String, dynamic>> _dummyUsers = [
+    {
+      "fullName": "Staff",
+      "isActive": true,
+      "password": "staff123",
+      "role": "staff",
+      "username": "staff"
+    },
+    {
+      "fullName": "Admin",
+      "isActive": true,
+      "password": "admin123",
+      "role": "admin",
+      "username": "admin"
+    }
+  ];
+
   final GetStorage _storage = GetStorage();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -59,6 +79,12 @@ class AuthService extends GetxService {
   // Login dengan username dan password dari Firestore
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
+      // [STATIC-MODE] Use dummy users instead of Firebase
+      if (useStaticData) {
+        return _staticLogin(username, password);
+      }
+
+      // [FIREBASE-MODE] Original code below
       // Query ke Firestore collection 'users'
       final querySnapshot = await _firestore
           .collection('users')
@@ -128,6 +154,34 @@ class AuthService extends GetxService {
         'message': 'Terjadi kesalahan: ${e.toString()}',
       };
     }
+  }
+
+  // [STATIC-MODE] Login dengan dummy users
+  Map<String, dynamic> _staticLogin(String username, String password) {
+    final match = _dummyUsers.where((u) =>
+      u['username'] == username && u['password'] == password
+    );
+    if (match.isEmpty) {
+      return {'success': false, 'message': 'Username atau password salah'};
+    }
+    final user = match.first;
+    final role = user['role'] as String;
+    final isActive = user['isActive'] as bool;
+    if (!isActive) {
+      return {'success': false, 'message': 'Akun ini dinonaktifkan. Hubungi admin.'};
+    }
+    _storage.write(_keyIsLoggedIn, true);
+    _storage.write(_keyUsername, username);
+    _storage.write(_keyRole, role);
+    _storage.write(_keyLoginTimestamp, DateTime.now().millisecondsSinceEpoch);
+    isLoggedIn.value = true;
+    currentUsername.value = username;
+    currentRole.value = role;
+    return {
+      'success': true,
+      'message': 'Login berhasil sebagai ${role == 'admin' ? 'Admin' : 'Staff'}',
+      'user': {'username': username, 'role': role, 'isActive': isActive},
+    };
   }
 
   // Logout
