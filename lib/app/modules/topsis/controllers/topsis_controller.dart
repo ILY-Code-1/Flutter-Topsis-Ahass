@@ -1,6 +1,7 @@
 // [DISABLED FOR TESTING - Firebase] import 'dart:convert';
 // [DISABLED FOR TESTING - Firebase] import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../models/analisis_topsis_model.dart';
 import '../../../models/item_model.dart';
@@ -35,7 +36,11 @@ class TopsisController extends GetxController {
       // Step 1.1: Create or update snapshot for the current month
       // [STATIC-MODE] Skip snapshot in static mode
       if (!useStaticData) {
-        await Get.find<TopsisService>().createSnapshot(currentItems, analysisMonth, analysisYear);
+        await Get.find<TopsisService>().createSnapshot(
+          currentItems,
+          analysisMonth,
+          analysisYear,
+        );
       }
 
       final itemStats = await _fetchItemStats(analysisMonth, analysisYear);
@@ -63,7 +68,10 @@ class TopsisController extends GetxController {
       // Step 4: Apply weights (3 criteria)
       // stok_sekarang: 0.30, total_keluar: 0.45, frekuensi_keluar: 0.25
       final weights = [0.30, 0.45, 0.25];
-      final weightedMatrix = _calculator.applyWeights(normalizedMatrix, weights);
+      final weightedMatrix = _calculator.applyWeights(
+        normalizedMatrix,
+        weights,
+      );
 
       // Step 5: Determine ideal solutions
       final idealSolutions = _calculator.getIdealSolutions(weightedMatrix);
@@ -102,9 +110,19 @@ class TopsisController extends GetxController {
         await Get.find<TopsisService>().saveAnalysis(analysis);
       }
 
-      Get.snackbar('Success', 'TOPSIS analysis completed successfully');
+      Get.snackbar(
+        'Success',
+        'TOPSIS analysis completed successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.black,
+      );
     } catch (e) {
-      Get.snackbar('Error', 'Failed to run analysis: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to run analysis: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.black12,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -171,7 +189,10 @@ class TopsisController extends GetxController {
   //   return list;
   // }
 
-  Future<Map<String, List<int>>> _fetchFirestoreItemStats(int month, int year) async {
+  Future<Map<String, List<int>>> _fetchFirestoreItemStats(
+    int month,
+    int year,
+  ) async {
     final firstDayOfMonth = DateTime(year, month, 1);
     final lastDayOfMonth = DateTime(year, month + 1, 0, 23, 59, 59);
 
