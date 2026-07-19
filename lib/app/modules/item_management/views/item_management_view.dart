@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../themes/themes.dart';
@@ -18,6 +17,7 @@ class ItemManagementView extends GetView<ItemManagementController> {
     return Scaffold(
       drawer: const AdminDrawer(currentRoute: '/item-management'),
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Row(
           children: [
             Container(
@@ -293,51 +293,73 @@ class ItemManagementView extends GetView<ItemManagementController> {
                               const SizedBox(width: 12),
                               // Mulai Analisis Button
                               Expanded(
-                                child: Obx(() => ElevatedButton.icon(
-                                  onPressed: topsisController.isLoading.value
-                                      ? null
-                                      : () async {
-                                          int? analysisMonth;
-                                          if (controller.selectedMonth.value.isNotEmpty &&
-                                              controller.selectedMonth.value != 'Semua') {
-                                            final monthMap = {
-                                              'Januari': 1, 'Februari': 2, 'Maret': 3,
-                                              'April': 4, 'Mei': 5, 'Juni': 6,
-                                              'Juli': 7, 'Agustus': 8, 'September': 9,
-                                              'Oktober': 10, 'November': 11, 'Desember': 12,
-                                            };
-                                            analysisMonth = monthMap[controller.selectedMonth.value];
-                                          }
-                                          await topsisController.runAnalysis(month: analysisMonth);
-                                          controller.fetchItems();
-                                        },
-                                  icon: topsisController.isLoading.value
-                                      ? Container(
-                                          width: 20,
-                                          height: 20,
-                                          child: const CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Icon(Icons.analytics, size: 20),
-                                  label: Text(
-                                    topsisController.isLoading.value
-                                        ? 'Analyzing...'
-                                        : 'Analyze Stock Priority',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                child: Obx(
+                                  () => ElevatedButton.icon(
+                                    onPressed: topsisController.isLoading.value
+                                        ? null
+                                        : () async {
+                                            int? analysisMonth;
+                                            if (controller
+                                                    .selectedMonth
+                                                    .value
+                                                    .isNotEmpty &&
+                                                controller
+                                                        .selectedMonth
+                                                        .value !=
+                                                    'Semua') {
+                                              final monthMap = {
+                                                'Januari': 1,
+                                                'Februari': 2,
+                                                'Maret': 3,
+                                                'April': 4,
+                                                'Mei': 5,
+                                                'Juni': 6,
+                                                'Juli': 7,
+                                                'Agustus': 8,
+                                                'September': 9,
+                                                'Oktober': 10,
+                                                'November': 11,
+                                                'Desember': 12,
+                                              };
+                                              analysisMonth =
+                                                  monthMap[controller
+                                                      .selectedMonth
+                                                      .value];
+                                            }
+                                            await topsisController.runAnalysis(
+                                              month: analysisMonth,
+                                            );
+                                            controller.fetchItems();
+                                          },
+                                    icon: topsisController.isLoading.value
+                                        ? Container(
+                                            width: 20,
+                                            height: 20,
+                                            child:
+                                                const CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                  strokeWidth: 2,
+                                                ),
+                                          )
+                                        : const Icon(Icons.analytics, size: 20),
+                                    label: Text(
+                                      topsisController.isLoading.value
+                                          ? 'Analyzing...'
+                                          : 'Analyze Stock Priority',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.success,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 12,
+                                      ),
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.success,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                )),
+                                ),
                               ),
                             ],
                           ),

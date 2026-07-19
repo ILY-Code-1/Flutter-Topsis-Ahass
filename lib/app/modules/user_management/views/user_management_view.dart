@@ -12,6 +12,7 @@ class UserManagementView extends GetView<UserManagementController> {
     return Scaffold(
       drawer: const AdminDrawer(currentRoute: '/user-management'),
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Row(
           children: [
             Container(
@@ -474,14 +475,14 @@ class UserManagementView extends GetView<UserManagementController> {
               final user = entry.value;
 
               return DataRow(
-                color: WidgetStateProperty.resolveWith<Color>(
-                  (Set<WidgetState> states) {
-                    if (index.isEven) {
-                      return AppColors.softBlue.withValues(alpha: 0.3);
-                    }
-                    return Colors.white;
-                  },
-                ),
+                color: WidgetStateProperty.resolveWith<Color>((
+                  Set<WidgetState> states,
+                ) {
+                  if (index.isEven) {
+                    return AppColors.softBlue.withValues(alpha: 0.3);
+                  }
+                  return Colors.white;
+                }),
                 cells: [
                   // Username
                   DataCell(
@@ -531,7 +532,8 @@ class UserManagementView extends GetView<UserManagementController> {
                             icon: const Icon(Icons.edit_outlined),
                             color: Colors.blue.shade700,
                             tooltip: 'Edit',
-                            onPressed: () => controller.showEditUserDialog(user),
+                            onPressed: () =>
+                                controller.showEditUserDialog(user),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -658,8 +660,7 @@ class UserManagementView extends GetView<UserManagementController> {
   }) {
     final color = isActive ? Colors.orange.shade700 : Colors.green.shade700;
     final bgColor = isActive ? Colors.orange.shade50 : Colors.green.shade50;
-    final icon =
-        isActive ? Icons.toggle_off_rounded : Icons.toggle_on_rounded;
+    final icon = isActive ? Icons.toggle_off_rounded : Icons.toggle_on_rounded;
     final label = isActive ? 'Nonaktifkan' : 'Aktifkan';
 
     if (compact) {

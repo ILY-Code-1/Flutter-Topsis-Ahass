@@ -72,52 +72,6 @@ class StaffStockView extends GetView<StaffStockController> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (controller.displayItems.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.hondaRed.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.inventory_2_outlined,
-                      size: 80,
-                      color: AppColors.hondaRed.withOpacity(0.5),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Tidak ada data untuk bulan ini',
-                    style: AppTextStyles.h3.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    controller.selectedMonth.value.isEmpty
-                        ? 'Pilih bulan untuk melihat transaksi'
-                        : 'Tidak ada transaksi pada bulan ${controller.selectedMonth.value}',
-                    style: AppTextStyles.bodyLarge.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Container(
@@ -126,17 +80,21 @@ class StaffStockView extends GetView<StaffStockController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Header Card
-                  _buildHeaderCard(context),
+                  _buildMonthFilter(context),
                   const SizedBox(height: 16),
-                  // Stock Table
-                  StockTableWidget(
-                    items: controller.displayItems,
-                    config: StockTableConfig(
-                      showActions: false,
-                      isEditable: false,
+                  if (controller.displayItems.isEmpty)
+                    _buildEmptyState()
+                  else ...[
+                    _buildHeaderCard(context),
+                    const SizedBox(height: 16),
+                    StockTableWidget(
+                      items: controller.displayItems,
+                      config: StockTableConfig(
+                        showActions: false,
+                        isEditable: false,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -212,89 +170,160 @@ class StaffStockView extends GetView<StaffStockController> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // Month Filter Dropdown
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: Obx(() => DropdownButton<String>(
-                          isExpanded: true,
-                          hint: const Text('Pilih Bulan'),
-                          value: controller.selectedMonth.value.isNotEmpty
-                              ? controller.selectedMonth.value
-                              : null,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'Semua',
-                              child: Text('Semua Bulan'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Januari',
-                              child: Text('Januari'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Februari',
-                              child: Text('Februari'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Maret',
-                              child: Text('Maret'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'April',
-                              child: Text('April'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Mei',
-                              child: Text('Mei'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Juni',
-                              child: Text('Juni'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Juli',
-                              child: Text('Juli'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Agustus',
-                              child: Text('Agustus'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'September',
-                              child: Text('September'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Oktober',
-                              child: Text('Oktober'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'November',
-                              child: Text('November'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Desember',
-                              child: Text('Desember'),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            controller.selectedMonth.value = value ?? '';
-                            controller.applyMonthFilter();
-                          },
-                        )),
-                  ),
-                ),
-              ),
-            ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthFilter(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Filter Bulan',
+            style: AppTextStyles.h3.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: Obx(() => DropdownButton<String>(
+                    isExpanded: true,
+                    hint: const Text('Pilih Bulan'),
+                    value: controller.selectedMonth.value.isNotEmpty
+                        ? controller.selectedMonth.value
+                        : null,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'Semua',
+                        child: Text('Semua Bulan'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Januari',
+                        child: Text('Januari'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Februari',
+                        child: Text('Februari'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Maret',
+                        child: Text('Maret'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'April',
+                        child: Text('April'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Mei',
+                        child: Text('Mei'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Juni',
+                        child: Text('Juni'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Juli',
+                        child: Text('Juli'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Agustus',
+                        child: Text('Agustus'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'September',
+                        child: Text('September'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Oktober',
+                        child: Text('Oktober'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'November',
+                        child: Text('November'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Desember',
+                        child: Text('Desember'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      controller.selectedMonth.value = value ?? '';
+                      controller.applyMonthFilter();
+                    },
+                  )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.hondaRed.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.inventory_2_outlined,
+                size: 80,
+                color: AppColors.hondaRed.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'Tidak ada data untuk bulan ini',
+              style: AppTextStyles.h3.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              controller.selectedMonth.value.isEmpty
+                  ? 'Pilih bulan untuk melihat transaksi'
+                  : 'Tidak ada transaksi pada bulan ${controller.selectedMonth.value}',
+              style: AppTextStyles.bodyLarge.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

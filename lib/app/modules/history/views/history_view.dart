@@ -14,6 +14,7 @@ class HistoryView extends GetView<HistoryController> {
     return Scaffold(
       drawer: const AdminDrawer(currentRoute: '/history'),
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Row(
           children: [
             Container(
