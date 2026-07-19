@@ -328,3 +328,40 @@ class StaffStockView extends GetView<StaffStockController> {
     );
   }
 }
+
+/*
+ * ============================================================================
+ * DOKUMENTASI PERBAIKAN - EMPTY STATE DENGAN FILTER VISIBLE
+ * ============================================================================
+ * 
+ * TANGGAL: Juli 2026 (sebelum perbaikan item_management)
+ * 
+ * BUG YANG SUDAH DIPERBAIKI:
+ * - Filter bulan tetap visible saat empty state
+ * - User bisa mengubah filter tanpa harus refresh halaman
+ * 
+ * STRUKTUR YANG BENAR (sudah diterapkan di file ini):
+ * body: Obx(() {
+ *   return SingleChildScrollView(
+ *     child: Column [
+ *       _buildMonthFilter(),  ← SELALU di-render
+ *       if (items.isEmpty)
+ *         _buildEmptyState()  ← Conditional
+ *       else
+ *         _buildHeaderCard() + Table
+ *     ]
+ *   )
+ * })
+ * 
+ * PELAJARAN:
+ * - Filter/control panel harus SELALU di-render di luar kondisi empty state
+ * - Empty state hanya mengganti data display, bukan seluruh UI
+ * - Pattern ini kemudian diterapkan juga di item_management_view.dart
+ * 
+ * PERBEDAAN DENGAN ITEM_MANAGEMENT:
+ * - staff_stock: Filter di dalam SingleChildScrollView, tapi SELALU di-render
+ * - item_management: Filter di luar Expanded, data section di dalam Expanded
+ * - Keduanya memastikan filter tetap accessible saat empty state
+ * 
+ * ============================================================================
+ */

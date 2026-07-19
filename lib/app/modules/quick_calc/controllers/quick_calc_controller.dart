@@ -105,13 +105,12 @@ class QuickCalcController extends GetxController {
         data['id'] = doc.id;
         return ItemData.fromJson(data);
       }).toList();
-
     } catch (e) {
       Get.snackbar(
         'Error',
         'Gagal memuat data item: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -156,8 +155,8 @@ class QuickCalcController extends GetxController {
         'Error',
         'Terjadi kesalahan: $e',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        backgroundColor: Colors.white,
+        colorText: Colors.white,
       );
     } finally {
       isProcessing.value = false;

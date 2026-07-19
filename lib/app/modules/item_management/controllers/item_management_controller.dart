@@ -4,15 +4,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../../../models/item_model.dart';
 import '../../../services/item_service.dart';
+import '../../../services/topsis_service.dart';
 
 class ItemManagementController extends GetxController {
   final ItemService _itemService = Get.find<ItemService>();
+  final TopsisService _topsisService = Get.find<TopsisService>();
 
   final isLoading = false.obs;
   final items = <ItemModel>[].obs;
 
-  // Selected month filter (for future implementation)
   final selectedMonth = ''.obs;
+  final selectedYear = DateTime.now().year.obs;
+  final snapshotExists = false.obs;
+  final isViewingHistorical = false.obs;
+
+  static const Map<String, int> monthMap = {
+    'Januari': 1,
+    'Februari': 2,
+    'Maret': 3,
+    'April': 4,
+    'Mei': 5,
+    'Juni': 6,
+    'Juli': 7,
+    'Agustus': 8,
+    'September': 9,
+    'Oktober': 10,
+    'November': 11,
+    'Desember': 12,
+  };
+
+  static const List<int> availableYears = [2024, 2025, 2026];
 
   // Controllers untuk form
   final idBarangController = TextEditingController();
@@ -41,23 +62,53 @@ class ItemManagementController extends GetxController {
     super.onClose();
   }
 
-  // Fetch semua items dari Firebase
   Future<void> fetchItems() async {
     try {
       isLoading.value = true;
+      snapshotExists.value = false;
 
-      final fetchedItems = await _itemService.getItems();
-      items.value = fetchedItems;
+      final isHistorical =
+          selectedMonth.value.isNotEmpty && selectedMonth.value != 'Semua';
+      isViewingHistorical.value = isHistorical;
+
+      if (isHistorical) {
+        final month = monthMap[selectedMonth.value] ?? DateTime.now().month;
+        final year = selectedYear.value;
+
+        final snapshot = await _topsisService.getSnapshot(month, year);
+        if (snapshot != null) {
+          items.value = snapshot.items;
+          snapshotExists.value = true;
+        } else {
+          items.value = [];
+          snapshotExists.value = false;
+        }
+      } else {
+        final fetchedItems = await _itemService.getItems();
+        items.value = fetchedItems;
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
         'Gagal memuat data item: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void onMonthChanged(String? value) {
+    selectedMonth.value = value ?? '';
+    fetchItems();
+  }
+
+  void onYearChanged(int? value) {
+    if (value != null) {
+      selectedYear.value = value;
+      fetchItems();
     }
   }
 
@@ -146,7 +197,7 @@ class ItemManagementController extends GetxController {
             'Error',
             'ID Barang "$idBarang" sudah ada. Gunakan ID lain.',
             backgroundColor: Colors.red.shade100,
-            colorText: Colors.red.shade900,
+            colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
           );
           isLoading.value = false;
@@ -183,7 +234,7 @@ class ItemManagementController extends GetxController {
         'Error',
         'Gagal menyimpan item: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -246,7 +297,7 @@ class ItemManagementController extends GetxController {
         'Error',
         'Gagal menghapus item: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -254,3 +305,43 @@ class ItemManagementController extends GetxController {
     }
   }
 }
+
+/*
+ * ============================================================================
+ * DOKUMENTASI PERBAIKAN BUG - FILTER BULAN & TAHUN
+ * ============================================================================
+ * 
+ * TANGGAL: Juli 2026
+ * 
+ * BUG:
+ * - Filter bulan tidak berfungsi, data tidak berubah saat memilih bulan berbeda
+ * - Saat pilih bulan yang belum ada data (misal Januari), tetap menampilkan data
+ * - Tidak ada empty state yang informatif
+ * 
+ * ROOT CAUSE:
+ * - selectedMonth hanya di-set tapi tidak pernah digunakan untuk filter data
+ * - fetchItems() selalu fetch dari collection 'items' tanpa memandang bulan
+ * - Tidak ada integrasi dengan collection 'stock_snapshot' untuk data historis
+ * 
+ * SOLUSI YANG DITERAPKAN:
+ * 1. Tambah selectedYear observable untuk filter tahun
+ * 2. Tambah snapshotExists dan isViewingHistorical untuk tracking state
+ * 3. Ubah fetchItems():
+ *    - Jika month dipilih & bukan "Semua" → fetch dari stock_snapshot
+ *    - Jika "Semua" atau kosong → fetch dari items collection (real-time)
+ * 4. Tambah onMonthChanged() dan onYearChanged() yang trigger fetchItems()
+ * 5. Tambah static monthMap dan availableYears untuk konversi bulan
+ * 
+ * PELAJARAN:
+ * - State observable harus selalu digunakan, bukan hanya di-set
+ * - Filter UI harus trigger data refresh
+ * - Data historis butuh mekanisme snapshot, tidak bisa hanya pakai data real-time
+ * - Empty state harus informatif dan tetap membiarkan user berinteraksi dengan filter
+ * 
+ * STRUKTUR DATA:
+ * - stock_snapshot collection menyimpan snapshot items per bulan/tahun
+ * - Format: { bulan: int, tahun: int, created_at: Timestamp, items: List<ItemModel> }
+ * - Snapshot dibuat saat runAnalysis() untuk periode berjalan
+ * 
+ * ============================================================================
+ */

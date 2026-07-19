@@ -27,29 +27,43 @@ class TopsisController extends GetxController {
       final analysisMonth = month ?? now.month;
       final analysisYear = year ?? now.year;
 
-      // Step 1: Always fetch the latest items to ensure synchronized stock
-      final currentItems = await _fetchItems();
-      if (currentItems.isEmpty) {
-        throw Exception('No items found to analyze');
-      }
+      final bool isCurrentPeriod =
+          analysisMonth == now.month && analysisYear == now.year;
 
-      // Step 1.1: Create or update snapshot for the current month
-      // [STATIC-MODE] Skip snapshot in static mode
-      if (!useStaticData) {
-        await Get.find<TopsisService>().createSnapshot(
-          currentItems,
+      List<ItemModel> currentItems;
+
+      if (isCurrentPeriod) {
+        currentItems = await _fetchItems();
+        if (currentItems.isEmpty) {
+          throw Exception('No items found to analyze');
+        }
+
+        if (!useStaticData) {
+          await Get.find<TopsisService>().createSnapshot(
+            currentItems,
+            analysisMonth,
+            analysisYear,
+          );
+        }
+      } else {
+        final snapshot = await Get.find<TopsisService>().getSnapshot(
           analysisMonth,
           analysisYear,
         );
+        if (snapshot == null) {
+          throw Exception(
+            'Belum ada data snapshot untuk bulan $analysisMonth tahun $analysisYear. '
+            'Jalankan analisis saat bulan tersebut terlebih dahulu.',
+          );
+        }
+        currentItems = snapshot.items;
+        if (currentItems.isEmpty) {
+          throw Exception('Snapshot kosong untuk periode yang dipilih');
+        }
       }
 
       final itemStats = await _fetchItemStats(analysisMonth, analysisYear);
 
-      // Step 2: Build decision matrix using real-time items (3 criteria: stok_sekarang, total_keluar, frekuensi_keluar)
-      // Criteria:
-      // 0: stok_sekarang (cost)
-      // 1: total_keluar (benefit)
-      // 2: frekuensi_keluar (benefit)
       final matrix = currentItems.map((item) {
         final stats = itemStats[item.idBarang] ?? [];
         final totalKeluar = stats.fold<int>(0, (sum, qty) => sum + qty);
@@ -62,36 +76,28 @@ class TopsisController extends GetxController {
         ];
       }).toList();
 
-      // Step 3: Normalize matrix
       final normalizedMatrix = _calculator.normalizeMatrix(matrix);
 
-      // Step 4: Apply weights (3 criteria)
-      // stok_sekarang: 0.30, total_keluar: 0.45, frekuensi_keluar: 0.25
       final weights = [0.30, 0.45, 0.25];
       final weightedMatrix = _calculator.applyWeights(
         normalizedMatrix,
         weights,
       );
 
-      // Step 5: Determine ideal solutions
       final idealSolutions = _calculator.getIdealSolutions(weightedMatrix);
       final positiveIdeal = idealSolutions[0];
       final negativeIdeal = idealSolutions[1];
 
-      // Step 6 & 7: Calculate distances
       final distances = _calculator.calculateDistances(
         weightedMatrix,
         positiveIdeal,
         negativeIdeal,
       );
 
-      // Step 8: Calculate preference values
       final preferenceValues = _calculator.calculatePreferenceValues(distances);
 
-      // Step 9 & 10: Rank items with synced data
       final rankedItems = _rankItems(currentItems, preferenceValues, itemStats);
 
-      // Save analysis
       final analysis = AnalisisTopsisModel(
         periodeBulan: analysisMonth,
         periodeTahun: analysisYear,
@@ -105,7 +111,6 @@ class TopsisController extends GetxController {
         results: rankedItems,
       );
 
-      // [STATIC-MODE] Skip saving to Firebase in static mode
       if (!useStaticData) {
         await Get.find<TopsisService>().saveAnalysis(analysis);
       }
@@ -121,7 +126,7 @@ class TopsisController extends GetxController {
         'Error',
         'Failed to run analysis: $e',
         backgroundColor: Colors.redAccent,
-        colorText: Colors.black12,
+        colorText: Colors.white,
       );
     } finally {
       isLoading.value = false;
@@ -264,3 +269,51 @@ class TopsisController extends GetxController {
     }).toList();
   }
 }
+
+/*
+ * ============================================================================
+ * DOKUMENTASI PERBAIKAN - ANALISIS HISTORIS DENGAN SNAPSHOT
+ * ============================================================================
+ * 
+ * TANGGAL: Juli 2026
+ * 
+ * BUG:
+ * - runAnalysis() selalu menggunakan data real-time dari collection 'items'
+ * - Tidak bisa melakukan analisis untuk bulan/tahun yang sudah lewat
+ * - Saat pilih bulan lalu untuk analisis, data yang dipakai tetap data sekarang
+ * 
+ * ROOT CAUSE:
+ * - Tidak ada logika untuk membedakan periode sekarang vs periode lalu
+ * - Selalu fetch dari ItemService.getItems() tanpa cek snapshot
+ * - Snapshot hanya dibuat, tidak pernah dibaca untuk analisis historis
+ * 
+ * SOLUSI YANG DITERAPKAN:
+ * 1. Tambah pengecekan isCurrentPeriod (month == now.month && year == now.year)
+ * 2. Jika periode sekarang:
+ *    - Fetch items real-time dari ItemService
+ *    - Buat snapshot untuk periode ini
+ *    - Lanjutkan analisis seperti biasa
+ * 3. Jika periode lalu:
+ *    - Ambil items dari stock_snapshot via TopsisService.getSnapshot()
+ *    - Jika snapshot tidak ada → error dengan pesan informatif
+ *    - Gunakan items dari snapshot untuk decision matrix
+ * 4. barang_keluar tetap di-filter berdasarkan month+year yang dipilih
+ * 
+ * ALUR ANALISIS:
+ * Periode Sekarang → fetch real-time → create snapshot → analisis
+ * Periode Lalu → read snapshot → analisis (tanpa create snapshot baru)
+ * 
+ * PELAJARAN:
+ * - Data historis butuh mekanisme "time travel" via snapshot
+ * - Snapshot harus dibuat SAAT periode berjalan, bukan setelah lewat
+ * - Error message harus informatif: "Jalankan analisis saat bulan tersebut terlebih dahulu"
+ * - Decision matrix untuk periode lalu pakai stok dari snapshot, bukan stok real-time
+ * 
+ * PENTING:
+ * - stok_sekarang di decision matrix berasal dari snapshot untuk periode lalu
+ * - total_keluar dan frekuensi_keluar berasal dari barang_keluar yang di-filter bulan/tahun
+ * - Jika snapshot belum ada untuk periode lalu, user harus menjalankan analisis
+ *   saat periode tersebut masih berjalan
+ * 
+ * ============================================================================
+ */

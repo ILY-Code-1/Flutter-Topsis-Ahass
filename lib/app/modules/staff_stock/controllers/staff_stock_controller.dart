@@ -43,13 +43,12 @@ class StaffStockController extends GetxController {
 
       // Apply filter if month is selected
       applyMonthFilter();
-
     } catch (e) {
       Get.snackbar(
         'Error',
         'Gagal memuat data item: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -135,12 +134,14 @@ class StaffStockController extends GetxController {
       final month = selectedMonth.value;
       displayItems.value = items.where((item) {
         // Check if item had barang_masuk in this month
-        final hasMasuk = barangMasukCount.containsKey(month) &&
+        final hasMasuk =
+            barangMasukCount.containsKey(month) &&
             barangMasukCount[month]!.containsKey(item.idBarang) &&
             barangMasukCount[month]![item.idBarang]! > 0;
 
         // Check if item had barang_keluar in this month
-        final hasKeluar = barangKeluarCount.containsKey(month) &&
+        final hasKeluar =
+            barangKeluarCount.containsKey(month) &&
             barangKeluarCount[month]!.containsKey(item.idBarang) &&
             barangKeluarCount[month]![item.idBarang]! > 0;
 
@@ -154,9 +155,18 @@ class StaffStockController extends GetxController {
   String _getMonthFromTimestamp(Timestamp timestamp) {
     final date = timestamp.toDate();
     final months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei',
-      'Juni', 'Juli', 'Agustus', 'September', 'Oktober',
-      'November', 'Desember'
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     return months[date.month - 1];
   }

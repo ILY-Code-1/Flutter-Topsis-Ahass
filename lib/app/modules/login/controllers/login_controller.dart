@@ -6,14 +6,14 @@ import '../../../routes/app_pages.dart';
 class LoginController extends GetxController {
   // Auth Service
   final AuthService _authService = Get.find<AuthService>();
-  
+
   // Text Editing Controllers for form inputs
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  
+
   // Form key untuk validasi
   final formKey = GlobalKey<FormState>();
-  
+
   // Observable states
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
@@ -58,19 +58,19 @@ class LoginController extends GetxController {
     if (!formKey.currentState!.validate()) {
       return;
     }
-    
+
     // Hapus keyboard
     FocusScope.of(Get.context!).unfocus();
-    
+
     isLoading.value = true;
-    
+
     try {
       // Login via auth service
       final result = await _authService.login(
         usernameController.text.trim(),
         passwordController.text,
       );
-      
+
       if (result['success'] == true) {
         // Login berhasil
         Get.snackbar(
@@ -81,10 +81,10 @@ class LoginController extends GetxController {
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 2),
         );
-        
+
         // Navigasi berdasarkan role user
         await Future.delayed(const Duration(milliseconds: 500));
-        
+
         // Cek role user
         if (_authService.isAdmin) {
           // Jika admin, arahkan ke dashboard admin
@@ -99,7 +99,7 @@ class LoginController extends GetxController {
           'Gagal',
           result['message'],
           backgroundColor: Colors.red.shade100,
-          colorText: Colors.red.shade900,
+          colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 3),
         );
@@ -109,7 +109,7 @@ class LoginController extends GetxController {
         'Error',
         'Terjadi kesalahan: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );

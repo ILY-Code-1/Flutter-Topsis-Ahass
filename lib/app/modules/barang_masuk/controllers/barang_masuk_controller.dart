@@ -37,7 +37,7 @@ class BarangMasukController extends GetxController {
         'Error',
         e.toString(),
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -52,8 +52,18 @@ class BarangMasukController extends GetxController {
     }
 
     final months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     final monthIndex = months.indexOf(selectedMonth.value);
     if (monthIndex == -1) {
@@ -82,9 +92,12 @@ class BarangMasukController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        e.toString().replaceFirst('Exception: Gagal menambah barang masuk: Exception: ', ''),
+        e.toString().replaceFirst(
+          'Exception: Gagal menambah barang masuk: Exception: ',
+          '',
+        ),
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {

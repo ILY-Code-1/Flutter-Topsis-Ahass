@@ -27,7 +27,7 @@ class UserManagementController extends GetxController {
         'Error',
         'Gagal memuat data user: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -36,17 +36,10 @@ class UserManagementController extends GetxController {
   }
 
   void showAddUserDialog() {
-    Get.dialog(
-      AddUserDialog(onSubmit: _addUser),
-      barrierDismissible: false,
-    );
+    Get.dialog(AddUserDialog(onSubmit: _addUser), barrierDismissible: false);
   }
 
-  Future<void> _addUser(
-    String username,
-    String password,
-    String role,
-  ) async {
+  Future<void> _addUser(String username, String password, String role) async {
     try {
       isLoading.value = true;
 
@@ -74,7 +67,7 @@ class UserManagementController extends GetxController {
         'Error',
         'Gagal menambahkan user: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
       rethrow;
@@ -123,7 +116,7 @@ class UserManagementController extends GetxController {
         'Error',
         'Gagal mengubah user: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
       rethrow;
@@ -141,7 +134,9 @@ class UserManagementController extends GetxController {
         title: Row(
           children: [
             Icon(
-              currentStatus ? Icons.toggle_off_rounded : Icons.toggle_on_rounded,
+              currentStatus
+                  ? Icons.toggle_off_rounded
+                  : Icons.toggle_on_rounded,
               color: currentStatus ? AppColors.error : AppColors.success,
             ),
             const SizedBox(width: 12),
@@ -169,8 +164,9 @@ class UserManagementController extends GetxController {
               await _toggleStatusConfirmed(userId, currentStatus);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  currentStatus ? AppColors.error : AppColors.success,
+              backgroundColor: currentStatus
+                  ? AppColors.error
+                  : AppColors.success,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -186,10 +182,7 @@ class UserManagementController extends GetxController {
     );
   }
 
-  Future<void> _toggleStatusConfirmed(
-    String userId,
-    bool currentStatus,
-  ) async {
+  Future<void> _toggleStatusConfirmed(String userId, bool currentStatus) async {
     try {
       isLoading.value = true;
       await _userService.toggleStatus(userId, currentStatus);
@@ -208,7 +201,7 @@ class UserManagementController extends GetxController {
         'Error',
         'Gagal mengubah status user: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -283,7 +276,7 @@ class UserManagementController extends GetxController {
         'Error',
         'Gagal menghapus user: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {

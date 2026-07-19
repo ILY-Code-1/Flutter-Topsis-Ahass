@@ -27,7 +27,7 @@ class HistoryController extends GetxController {
         'Error',
         'Gagal memuat data riwayat: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
     } finally {
@@ -82,7 +82,7 @@ class HistoryController extends GetxController {
         'Error',
         'Gagal menghapus riwayat: ${e.toString()}',
         backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
+        colorText: Colors.white,
       );
     } finally {
       isLoading.value = false;
