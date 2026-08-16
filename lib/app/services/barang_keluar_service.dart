@@ -47,48 +47,75 @@ class BarangKeluarService extends GetxService {
     }
   }
 
-  /// Add a new barang keluar record and decrement stok_sekarang in items
-  /// Stock will not go below zero
-  Future<void> addBarangKeluar(BarangKeluarModel record) async {
+  /// Add new barang keluar records and decrement stok_sekarang in items.
+  /// All records are written atomically in a single Firestore batch:
+  /// if any item has insufficient stock, the whole input is rejected.
+  Future<void> addBarangKeluar(List<BarangKeluarModel> records) async {
     try {
-      // Find the item document by id_barang
-      final itemQuery = await _firestore
-          .collection(_itemsCollection)
-          .where('id_barang', isEqualTo: record.idBarang)
-          .limit(1)
-          .get();
-
-      if (itemQuery.docs.isEmpty) {
-        throw Exception('Barang dengan kode ${record.idBarang} tidak ditemukan');
+      if (records.isEmpty) {
+        throw Exception('Tidak ada barang keluar untuk dicatat');
       }
 
-      final itemDoc = itemQuery.docs.first;
-      final currentData = itemDoc.data();
-      final currentStok = (currentData['stok_sekarang'] as num).toInt();
-      final stokMinimum = (currentData['stok_minimum'] as num).toInt();
+      final idBarangList = records.map((r) => r.idBarang).toSet().toList();
 
-      if (record.jumlah > currentStok) {
+      if (idBarangList.length != records.length) {
+        throw Exception('Terdapat barang duplikat dalam satu input');
+      }
+
+      final itemQuery = await _firestore
+          .collection(_itemsCollection)
+          .where('id_barang', whereIn: idBarangList)
+          .get();
+
+      final Map<String, QueryDocumentSnapshot<Map<String, dynamic>>> itemDocs =
+          {};
+      for (final doc in itemQuery.docs) {
+        itemDocs[doc.data()['id_barang'] as String] = doc;
+      }
+
+      final missingIds = idBarangList
+          .where((id) => !itemDocs.containsKey(id))
+          .toList();
+      if (missingIds.isNotEmpty) {
         throw Exception(
-          'Jumlah keluar (${record.jumlah}) melebihi stok saat ini ($currentStok)',
+          'Barang dengan kode ${missingIds.join(', ')} tidak ditemukan',
         );
       }
 
-      final newStok = currentStok - record.jumlah;
-      final newStatus = ItemModel.calculateStatusStok(newStok, stokMinimum);
+      final List<String> stockErrors = [];
+      for (final record in records) {
+        final data = itemDocs[record.idBarang]!.data();
+        final currentStok = (data['stok_sekarang'] as num).toInt();
+        if (record.jumlah > currentStok) {
+          stockErrors.add(
+            '${record.namaBarang} (jumlah ${record.jumlah} melebihi stok $currentStok)',
+          );
+        }
+      }
 
-      // Run as batch for atomicity
+      if (stockErrors.isNotEmpty) {
+        throw Exception('Stok tidak mencukupi: ${stockErrors.join('; ')}');
+      }
+
       final batch = _firestore.batch();
 
-      // Add barang_keluar document
-      final keluarRef = _firestore.collection(_collection).doc();
-      batch.set(keluarRef, record.toMap());
+      for (final record in records) {
+        final keluarRef = _firestore.collection(_collection).doc();
+        batch.set(keluarRef, record.toMap());
 
-      // Update items stok_sekarang and last_update
-      batch.update(itemDoc.reference, {
-        'stok_sekarang': newStok,
-        'status_stok': newStatus,
-        'last_update': FieldValue.serverTimestamp(),
-      });
+        final itemDoc = itemDocs[record.idBarang]!;
+        final data = itemDoc.data();
+        final currentStok = (data['stok_sekarang'] as num).toInt();
+        final stokMinimum = (data['stok_minimum'] as num).toInt();
+        final newStok = currentStok - record.jumlah;
+        final newStatus = ItemModel.calculateStatusStok(newStok, stokMinimum);
+
+        batch.update(itemDoc.reference, {
+          'stok_sekarang': newStok,
+          'status_stok': newStatus,
+          'last_update': FieldValue.serverTimestamp(),
+        });
+      }
 
       await batch.commit();
     } catch (e) {

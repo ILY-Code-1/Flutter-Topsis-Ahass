@@ -47,40 +47,59 @@ class BarangMasukService extends GetxService {
     }
   }
 
-  /// Add a new barang masuk record and increment stok_sekarang in items
-  Future<void> addBarangMasuk(BarangMasukModel record) async {
+  /// Add new barang masuk records and increment stok_sekarang in items.
+  /// All records are written atomically in a single Firestore batch.
+  Future<void> addBarangMasuk(List<BarangMasukModel> records) async {
     try {
-      // Find the item document by id_barang
-      final itemQuery = await _firestore
-          .collection(_itemsCollection)
-          .where('id_barang', isEqualTo: record.idBarang)
-          .limit(1)
-          .get();
-
-      if (itemQuery.docs.isEmpty) {
-        throw Exception('Barang dengan kode ${record.idBarang} tidak ditemukan');
+      if (records.isEmpty) {
+        throw Exception('Tidak ada barang masuk untuk dicatat');
       }
 
-      final itemDoc = itemQuery.docs.first;
-      final currentData = itemDoc.data();
-      final currentStok = (currentData['stok_sekarang'] as num).toInt();
-      final stokMinimum = (currentData['stok_minimum'] as num).toInt();
-      final newStok = currentStok + record.jumlah;
-      final newStatus = ItemModel.calculateStatusStok(newStok, stokMinimum);
+      final idBarangList = records.map((r) => r.idBarang).toSet().toList();
 
-      // Run as batch for atomicity
+      if (idBarangList.length != records.length) {
+        throw Exception('Terdapat barang duplikat dalam satu input');
+      }
+
+      final itemQuery = await _firestore
+          .collection(_itemsCollection)
+          .where('id_barang', whereIn: idBarangList)
+          .get();
+
+      final Map<String, QueryDocumentSnapshot<Map<String, dynamic>>> itemDocs =
+          {};
+      for (final doc in itemQuery.docs) {
+        itemDocs[doc.data()['id_barang'] as String] = doc;
+      }
+
+      final missingIds = idBarangList
+          .where((id) => !itemDocs.containsKey(id))
+          .toList();
+      if (missingIds.isNotEmpty) {
+        throw Exception(
+          'Barang dengan kode ${missingIds.join(', ')} tidak ditemukan',
+        );
+      }
+
       final batch = _firestore.batch();
 
-      // Add barang_masuk document
-      final masukRef = _firestore.collection(_collection).doc();
-      batch.set(masukRef, record.toMap());
+      for (final record in records) {
+        final masukRef = _firestore.collection(_collection).doc();
+        batch.set(masukRef, record.toMap());
 
-      // Update items stok_sekarang and last_update
-      batch.update(itemDoc.reference, {
-        'stok_sekarang': newStok,
-        'status_stok': newStatus,
-        'last_update': FieldValue.serverTimestamp(),
-      });
+        final itemDoc = itemDocs[record.idBarang]!;
+        final data = itemDoc.data();
+        final currentStok = (data['stok_sekarang'] as num).toInt();
+        final stokMinimum = (data['stok_minimum'] as num).toInt();
+        final newStok = currentStok + record.jumlah;
+        final newStatus = ItemModel.calculateStatusStok(newStok, stokMinimum);
+
+        batch.update(itemDoc.reference, {
+          'stok_sekarang': newStok,
+          'status_stok': newStatus,
+          'last_update': FieldValue.serverTimestamp(),
+        });
+      }
 
       await batch.commit();
     } catch (e) {

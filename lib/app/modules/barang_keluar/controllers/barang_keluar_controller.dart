@@ -78,13 +78,13 @@ class BarangKeluarController extends GetxController {
     }).toList();
   }
 
-  Future<void> addBarangKeluar(BarangKeluarModel record) async {
+  Future<void> addBarangKeluar(List<BarangKeluarModel> records) async {
     try {
       isSaving.value = true;
-      await _barangKeluarService.addBarangKeluar(record);
+      await _barangKeluarService.addBarangKeluar(records);
       Get.snackbar(
         'Berhasil',
-        'Barang keluar berhasil dicatat',
+        '${records.length} barang keluar berhasil dicatat',
         backgroundColor: Colors.green.shade100,
         colorText: Colors.green.shade900,
         snackPosition: SnackPosition.TOP,
